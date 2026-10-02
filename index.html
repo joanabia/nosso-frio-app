@@ -1,0 +1,1341 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f2f3e">
+
+<title>NOSSO FRIO | Mossoró</title>
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<style>
+:root {
+  --azul: #0f2f3e;
+  --amarelo: #f5c518;
+  --verde: #16a34a;
+  --cinza: #64748b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f3f6f8;
+  color: #172b35;
+  min-height: 100vh;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.header {
+  background: var(--azul);
+  color: white;
+  padding: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 3px solid var(--amarelo);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  background: var(--amarelo);
+  color: var(--azul);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+}
+
+.logo h1 {
+  font-size: 17px;
+}
+
+.logo span {
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.badge {
+  background: var(--amarelo);
+  color: var(--azul);
+  border-radius: 20px;
+  padding: 7px 9px;
+  font-weight: 800;
+  font-size: 10px;
+}
+
+.info {
+  background: #e8f5e9;
+  padding: 9px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--azul);
+}
+
+#map {
+  width: 100%;
+  height: 280px;
+  background: #dce5e9;
+}
+
+.page {
+  max-width: 760px;
+  margin: auto;
+  padding: 16px 13px 35px;
+}
+
+.section-title {
+  color: var(--azul);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.subtitle {
+  color: var(--cinza);
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 7px 0 15px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.card {
+  position: relative;
+  background: white;
+  border: 2px solid #e5eaf0;
+  border-radius: 14px;
+  padding: 17px 8px;
+  min-height: 112px;
+  text-align: center;
+  cursor: pointer;
+  color: #172b35;
+}
+
+.card.selected {
+  background: var(--azul);
+  color: white;
+  border-color: var(--azul);
+}
+
+.ic {
+  font-size: 25px;
+  margin-bottom: 6px;
+}
+
+.ct {
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.cs {
+  font-size: 11px;
+  color: var(--cinza);
+  margin-top: 4px;
+}
+
+.card.selected .cs {
+  color: #d4e0e6;
+}
+
+.tag {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 8px;
+  font-weight: 900;
+  padding: 4px 6px;
+  border-radius: 20px;
+}
+
+.def {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.ser {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.popular {
+  top: auto;
+  right: auto;
+  left: 6px;
+  bottom: 6px;
+  background: var(--amarelo);
+  color: var(--azul);
+}
+
+.check {
+  display: none;
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: var(--amarelo);
+  color: var(--azul);
+  border-radius: 50%;
+  width: 19px;
+  height: 19px;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.card.selected .check {
+  display: flex;
+}
+
+.notice {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #fff8c5;
+  border: 1px solid #e8ca4c;
+  color: var(--azul);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.selected-info {
+  display: none;
+  margin-top: 12px;
+  padding: 12px;
+  background: white;
+  border: 1px solid #e5eaf0;
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.selected-info.show {
+  display: block;
+}
+
+.cta {
+  width: 100%;
+  margin-top: 13px;
+  padding: 15px;
+  background: var(--azul);
+  color: var(--amarelo);
+  border: 2px solid var(--amarelo);
+  border-radius: 13px;
+  font-weight: 900;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cta small {
+  display: block;
+  margin-top: 5px;
+  color: white;
+  font-size: 11px;
+  font-weight: normal;
+}
+
+.tabs {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  z-index: 1000;
+  background: white;
+  border-top: 1px solid #e5eaf0;
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+}
+
+.tab {
+  flex: 1;
+  background: none;
+  border: 0;
+  color: #94a3b8;
+  font-size: 10px;
+  text-align: center;
+  padding: 3px;
+  cursor: pointer;
+}
+
+.tab span {
+  display: block;
+  font-size: 19px;
+  margin-bottom: 3px;
+}
+
+.tab.active {
+  color: var(--azul);
+  font-weight: 900;
+}
+
+.panel {
+  display: none;
+}
+
+.panel.active {
+  display: block;
+}
+
+.panel-card {
+  background: white;
+  border: 1px solid #e5eaf0;
+  border-radius: 14px;
+  padding: 15px;
+  margin-bottom: 12px;
+}
+
+.panel-card h3 {
+  color: var(--azul);
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.panel-card p,
+.panel-card li {
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.panel-card ul {
+  padding-left: 20px;
+}
+
+.field {
+  display: block;
+  margin-top: 13px;
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--azul);
+}
+
+.field input,
+.field select {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background: white;
+}
+
+.secondary {
+  width: 100%;
+  padding: 12px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--azul);
+  color: white;
+  font-weight: bold;
+  margin-top: 12px;
+  cursor: pointer;
+}
+
+.footer {
+  text-align: center;
+  color: var(--cinza);
+  font-size: 10px;
+  padding: 15px;
+}
+
+@media (max-width: 360px) {
+  .logo h1 {
+    font-size: 14px;
+  }
+
+  .badge {
+    font-size: 9px;
+  }
+
+  .info {
+    font-size: 10px;
+  }
+
+  #map {
+    height: 230px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">❄️</div>
+
+    <div>
+      <h1>NOSSO FRIO</h1>
+      <span>CHAME O TÉCNICO</span>
+    </div>
+  </div>
+
+  <div class="badge">● MOSSORÓ - RN</div>
+</header>
+
+<div class="info">
+  <div>
+    <b>Base:</b> R. Humberto Teixeira de Lima
+  </div>
+
+  <div>
+    <b>Atendimento:</b> Sob consulta
+  </div>
+</div>
+
+<div
+  id="map"
+  aria-label="Mapa demonstrativo da região de atendimento"
+></div>
+
+<main class="page">
+
+  <!-- INÍCIO -->
+  <section id="inicio" class="panel active">
+
+    <h2 class="section-title">
+      Qual o problema do seu ar?
+    </h2>
+
+    <p class="subtitle">
+      Selecione o serviço desejado. O orçamento será informado após
+      avaliação do equipamento.
+    </p>
+
+    <div class="grid" id="grid"></div>
+
+    <div class="notice">
+      <b>🛡️ Garantia e atendimento</b><br>
+
+      Condições de garantia, peças, visita e mão de obra devem ser
+      confirmadas com a empresa antes da contratação.
+
+      O orçamento depende do diagnóstico.
+    </div>
+
+    <div
+      class="selected-info"
+      id="selectedInfo"
+      aria-live="polite"
+    ></div>
+
+    <button
+      class="cta"
+      id="cta"
+      onclick="chamar()"
+      disabled
+    >
+      SELECIONE UM SERVIÇO
+
+      <small>
+        Solicite atendimento pelo WhatsApp
+      </small>
+    </button>
+
+  </section>
+
+
+  <!-- AGENDAR -->
+  <section id="agendar" class="panel">
+
+    <h2 class="section-title">
+      📅 Solicitar agendamento
+    </h2>
+
+    <p class="subtitle">
+      Informe seus dados e envie a solicitação.
+    </p>
+
+    <div class="panel-card">
+
+      <form id="formAgendamento">
+
+        <label class="field">
+          Nome
+
+          <input
+            id="nome"
+            required
+            maxlength="100"
+            placeholder="Seu nome"
+          >
+        </label>
+
+        <label class="field">
+          Telefone
+
+          <input
+            id="telefone"
+            required
+            type="tel"
+            maxlength="25"
+            placeholder="Seu telefone"
+          >
+        </label>
+
+        <label class="field">
+          Serviço
+
+          <select id="servico" required>
+
+            <option value="">
+              Escolha um serviço
+            </option>
+
+            <option>Não gela</option>
+            <option>Gotejando</option>
+            <option>Barulho</option>
+            <option>Não liga</option>
+            <option>Controle</option>
+            <option>Limpeza</option>
+            <option>Instalação</option>
+            <option>Manutenção</option>
+
+          </select>
+        </label>
+
+        <label class="field">
+          Data desejada
+
+          <input
+            id="data"
+            type="date"
+            required
+          >
+        </label>
+
+        <label class="field">
+          Endereço
+
+          <input
+            id="endereco"
+            required
+            maxlength="200"
+            placeholder="Rua, número e bairro"
+          >
+        </label>
+
+        <button
+          class="secondary"
+          type="submit"
+        >
+          Preparar solicitação
+        </button>
+
+      </form>
+
+    </div>
+
+  </section>
+
+
+  <!-- PLANOS -->
+  <section id="planos" class="panel">
+
+    <h2 class="section-title">
+      🛡️ Planos de manutenção
+    </h2>
+
+    <p class="subtitle">
+      Consulte os serviços e condições com a empresa.
+    </p>
+
+    <div class="panel-card">
+
+      <h3>Plano Básico</h3>
+
+      <p>
+        Proposta de até 2 higienizações por ano,
+        mediante avaliação e contratação.
+      </p>
+
+    </div>
+
+    <div class="panel-card">
+
+      <h3>Plano Completo</h3>
+
+      <p>
+        Proposta de até 4 higienizações por ano,
+        com condições de atendimento a combinar.
+      </p>
+
+    </div>
+
+    <div class="notice">
+
+      Os planos são propostas ilustrativas.
+
+      Valores, cobertura, periodicidade,
+      disponibilidade e garantia precisam ser
+      definidos pela empresa.
+
+    </div>
+
+    <button
+      class="secondary"
+      onclick="irParaInicio()"
+    >
+      Consultar serviço
+    </button>
+
+  </section>
+
+
+  <!-- TÉCNICO -->
+  <section id="tecnico" class="panel">
+
+    <h2 class="section-title">
+      🔧 Área do técnico
+    </h2>
+
+    <p class="subtitle">
+      Informações para contato com a equipe.
+    </p>
+
+    <div class="panel-card">
+
+      <h3>NOSSO FRIO</h3>
+
+      <p>
+        Instalação, limpeza e manutenção de
+        ar-condicionado.
+      </p>
+
+      <p>
+        Área demonstrativa: não existe login,
+        painel operacional ou lista real de chamados
+        neste arquivo.
+      </p>
+
+      <button
+        class="secondary"
+        onclick="abrirWhatsApp(
+          'Olá! Gostaria de falar com a equipe NOSSO FRIO.'
+        )"
+      >
+        Contatar a empresa
+      </button>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<footer class="footer">
+  NOSSO FRIO • Mossoró, Rio Grande do Norte
+</footer>
+
+
+<nav
+  class="tabs"
+  aria-label="Menu principal"
+>
+
+  <button
+    class="tab active"
+    data-tab="inicio"
+  >
+    <span>⌂</span>
+    Início
+  </button>
+
+  <button
+    class="tab"
+    data-tab="agendar"
+  >
+    <span>📅</span>
+    Agendar
+  </button>
+
+  <button
+    class="tab"
+    data-tab="planos"
+  >
+    <span>🛡️</span>
+    Planos
+  </button>
+
+  <button
+    class="tab"
+    data-tab="tecnico"
+  >
+    <span>🔧</span>
+    Técnico
+  </button>
+
+</nav>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+"use strict";
+
+/*
+====================================================
+CONFIGURAÇÃO DO WHATSAPP
+====================================================
+
+Coloque aqui o número comercial real.
+
+Formato:
+
+55 + DDD + número
+
+Exemplo:
+
+5584999999999
+
+Não coloque:
++
+espaços
+parênteses
+traços
+*/
+const WHATSAPP_EMPRESA = "5584999999999";
+
+
+/*
+====================================================
+SERVIÇOS
+====================================================
+*/
+
+const defeitos = [
+  {
+    t: "Não gela",
+    s: "Ar não refrigera",
+    i: "❄️",
+    k: "DEFEITO"
+  },
+
+  {
+    t: "Gotejando",
+    s: "Vazamento de água",
+    i: "💧",
+    k: "DEFEITO"
+  },
+
+  {
+    t: "Barulho",
+    s: "Ruído fora do normal",
+    i: "🔊",
+    k: "DEFEITO"
+  },
+
+  {
+    t: "Não liga",
+    s: "Equipamento não liga",
+    i: "⏻",
+    k: "DEFEITO"
+  },
+
+  {
+    t: "Controle",
+    s: "Problema no controle",
+    i: "🎛️",
+    k: "DEFEITO",
+    top: true
+  },
+
+  {
+    t: "Limpeza",
+    s: "Higienização",
+    i: "✨",
+    k: "SERVIÇO"
+  },
+
+  {
+    t: "Instalação",
+    s: "Instalar equipamento",
+    i: "🔧",
+    k: "SERVIÇO"
+  },
+
+  {
+    t: "Manutenção",
+    s: "Revisão preventiva",
+    i: "🛠️",
+    k: "SERVIÇO"
+  }
+];
+
+
+let selecionado = null;
+
+const grid = document.getElementById("grid");
+const cta = document.getElementById("cta");
+const selectedInfo =
+  document.getElementById("selectedInfo");
+
+
+/*
+====================================================
+CRIAR CARTÕES
+====================================================
+*/
+
+function criarCartoes() {
+
+  defeitos.forEach(function(d) {
+
+    const card =
+      document.createElement("button");
+
+    card.type = "button";
+
+    card.className = "card";
+
+    card.setAttribute(
+      "aria-pressed",
+      "false"
+    );
+
+
+    const tag =
+      document.createElement("span");
+
+    tag.className =
+      "tag " +
+      (d.k === "SERVIÇO"
+        ? "ser"
+        : "def");
+
+    tag.textContent = d.k;
+
+    card.appendChild(tag);
+
+
+    if (d.top) {
+
+      const popular =
+        document.createElement("span");
+
+      popular.className =
+        "tag popular";
+
+      popular.textContent =
+        "POPULAR";
+
+      card.appendChild(popular);
+    }
+
+
+    const check =
+      document.createElement("span");
+
+    check.className = "check";
+
+    check.textContent = "✓";
+
+    card.appendChild(check);
+
+
+    const ic =
+      document.createElement("div");
+
+    ic.className = "ic";
+
+    ic.textContent = d.i;
+
+    card.appendChild(ic);
+
+
+    const title =
+      document.createElement("div");
+
+    title.className = "ct";
+
+    title.textContent = d.t;
+
+    card.appendChild(title);
+
+
+    const subtitle =
+      document.createElement("div");
+
+    subtitle.className = "cs";
+
+    subtitle.textContent = d.s;
+
+    card.appendChild(subtitle);
+
+
+    card.addEventListener(
+      "click",
+      function() {
+
+        selecionado = d;
+
+
+        document
+          .querySelectorAll(".card")
+          .forEach(function(c) {
+
+            c.classList.remove(
+              "selected"
+            );
+
+            c.setAttribute(
+              "aria-pressed",
+              "false"
+            );
+
+          });
+
+
+        card.classList.add(
+          "selected"
+        );
+
+        card.setAttribute(
+          "aria-pressed",
+          "true"
+        );
+
+
+        selectedInfo.classList.add(
+          "show"
+        );
+
+
+        selectedInfo.textContent =
+          "Serviço selecionado: " +
+          d.t +
+          ". O orçamento depende da avaliação do equipamento.";
+
+
+        cta.disabled = false;
+
+
+        cta.innerHTML =
+          "SOLICITAR ATENDIMENTO" +
+          "<small>" +
+          d.t +
+          " • Continuar pelo WhatsApp" +
+          "</small>";
+
+      }
+    );
+
+
+    grid.appendChild(card);
+
+  });
+
+}
+
+
+/*
+====================================================
+WHATSAPP
+====================================================
+*/
+
+function abrirWhatsApp(mensagem) {
+
+  const numero =
+    WHATSAPP_EMPRESA.replace(
+      /\D/g,
+      ""
+    );
+
+
+  if (
+    !/^\d{12,13}$/.test(numero) ||
+    numero === "5584999999999"
+  ) {
+
+    alert(
+      "Configure o número real do WhatsApp da empresa no código, " +
+      "na variável WHATSAPP_EMPRESA, antes de utilizar o atendimento."
+    );
+
+    return;
+  }
+
+
+  const url =
+    "https://wa.me/" +
+    numero +
+    "?text=" +
+    encodeURIComponent(mensagem);
+
+
+  window.open(
+    url,
+    "_blank"
+  );
+}
+
+
+/*
+====================================================
+SOLICITAR ATENDIMENTO
+====================================================
+*/
+
+function chamar() {
+
+  if (!selecionado) {
+
+    alert(
+      "Selecione um serviço primeiro."
+    );
+
+    return;
+  }
+
+
+  abrirWhatsApp(
+
+    "Olá! Gostaria de solicitar atendimento da NOSSO FRIO.\n\n" +
+
+    "Serviço: " +
+    selecionado.t +
+    "\n" +
+
+    "Descrição: " +
+    selecionado.s +
+    "\n\n" +
+
+    "Gostaria de consultar disponibilidade e orçamento."
+
+  );
+
+}
+
+
+/*
+====================================================
+NAVEGAÇÃO
+====================================================
+*/
+
+function mostrarPainel(nome) {
+
+  document
+    .querySelectorAll(".panel")
+    .forEach(function(p) {
+
+      p.classList.toggle(
+        "active",
+        p.id === nome
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(".tab")
+    .forEach(function(b) {
+
+      b.classList.toggle(
+        "active",
+        b.dataset.tab === nome
+      );
+
+    });
+
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+
+  if (
+    nome === "inicio" &&
+    window.mapa
+  ) {
+
+    setTimeout(
+      function() {
+
+        window.mapa.invalidateSize();
+
+      },
+      100
+    );
+
+  }
+
+}
+
+
+function irParaInicio() {
+
+  mostrarPainel(
+    "inicio"
+  );
+
+}
+
+
+document
+  .querySelectorAll(".tab")
+  .forEach(function(botao) {
+
+    botao.addEventListener(
+      "click",
+      function() {
+
+        mostrarPainel(
+          botao.dataset.tab
+        );
+
+      }
+    );
+
+  });
+
+
+/*
+====================================================
+FORMULÁRIO DE AGENDAMENTO
+====================================================
+*/
+
+document
+  .getElementById("formAgendamento")
+  .addEventListener(
+    "submit",
+    function(e) {
+
+      e.preventDefault();
+
+
+      const data =
+        document.getElementById(
+          "data"
+        ).value;
+
+
+      const hoje =
+        new Date();
+
+      hoje.setHours(
+        0,
+        0,
+        0,
+        0
+      );
+
+
+      if (
+        data &&
+        new Date(
+          data + "T12:00:00"
+        ) < hoje
+      ) {
+
+        alert(
+          "Escolha a data de hoje ou uma data futura."
+        );
+
+        return;
+      }
+
+
+      const nome =
+        document
+          .getElementById("nome")
+          .value
+          .trim();
+
+
+      const telefone =
+        document
+          .getElementById("telefone")
+          .value
+          .trim();
+
+
+      const servico =
+        document
+          .getElementById("servico")
+          .value;
+
+
+      const endereco =
+        document
+          .getElementById("endereco")
+          .value
+          .trim();
+
+
+      const dataFormatada =
+        data
+          .split("-")
+          .reverse()
+          .join("/");
+
+
+      const mensagem =
+
+        "Olá! Gostaria de solicitar um agendamento.\n\n" +
+
+        "Nome: " +
+        nome +
+        "\n" +
+
+        "Telefone: " +
+        telefone +
+        "\n" +
+
+        "Serviço: " +
+        servico +
+        "\n" +
+
+        "Data desejada: " +
+        dataFormatada +
+        "\n" +
+
+        "Endereço: " +
+        endereco +
+        "\n\n" +
+
+        "Aguardo confirmação da disponibilidade.";
+
+
+      abrirWhatsApp(
+        mensagem
+      );
+
+    }
+  );
+
+
+/*
+====================================================
+MAPA
+====================================================
+*/
+
+function iniciarMapa() {
+
+  if (
+    typeof L === "undefined"
+  ) {
+
+    document.getElementById(
+      "map"
+    ).innerHTML =
+
+      '<p style="padding:20px">' +
+      'Não foi possível carregar o mapa. ' +
+      'Verifique sua conexão com a internet.' +
+      '</p>';
+
+    return;
+  }
+
+
+  const mapa =
+    L.map("map").setView(
+      [-5.1875, -37.3442],
+      14
+    );
+
+
+  window.mapa =
+    mapa;
+
+
+  L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+
+      maxZoom: 19
+    }
+  ).addTo(mapa);
+
+
+  L.marker(
+    [-5.1890, -37.3440]
+  )
+    .addTo(mapa)
+    .bindPopup(
+      "<b>NOSSO FRIO</b><br>" +
+      "Localização ilustrativa da base."
+    );
+
+
+  L.marker(
+    [-5.1850, -37.3400]
+  )
+    .addTo(mapa)
+    .bindPopup(
+      "Marcador ilustrativo de técnico."
+    );
+
+
+  L.marker(
+    [-5.1910, -37.3480]
+  )
+    .addTo(mapa)
+    .bindPopup(
+      "Segundo marcador ilustrativo."
+    );
+
+
+  L.control
+    .scale({
+      imperial: false
+    })
+    .addTo(mapa);
+
+}
+
+
+/*
+====================================================
+INICIAR A APLICAÇÃO
+====================================================
+*/
+
+criarCartoes();
+
+iniciarMapa();
+
+</script>
+
+</body>
+</html>
+```
