@@ -28,7 +28,7 @@ return (
 <Text style={styles.sub}>Mossoró - Nova Betânia</Text>
 <View style={styles.techCard}>
 <Text style={styles.techName}>Roberto • 3 min • a 800m</Text>
-<Text style={styles.techBike}>🛵 Honda Pop 110 - Placa QGW 4J21</Text>
+<Text style={styles.techBike}>🛵 Honda Biz 110 - </Text>
 </View>
 <TouchableOpacity onPress={() => setEtapa(3)} style={styles.btn}><Text style={styles.btnText}>Ver técnico chegando (teste)</Text></TouchableOpacity>
 </View>
@@ -50,7 +50,7 @@ return (
 <View style={styles.bottomSheet}>
 <Text style={styles.timer}>Chegada em 03:03</Text>
 <Text style={styles.techName}>Roberto Araújo de Freitas</Text>
-<Text style={styles.sub}>Resp. Tec. • (84) 9 9992-4521</Text>
+<Text style={styles.sub}>Resp. Tec. • (84) 9 998407707</Text>
 <TouchableOpacity onPress={() => setEtapa(1)} style={styles.btn}><Text style={styles.btnText}>Finalizar (voltar)</Text></TouchableOpacity>
 </View>
 <StatusBar style="light" />
@@ -65,7 +65,7 @@ return (
 <Text style={styles.headerSub}>CHAME O TÉCNICO • MOSSORÓ</Text>
 </View>
 <View style={styles.liveBar}>
-<Text style={styles.liveText}>🟡 AO VIVO • MOSSORÓ • Roberto • Carlos • 15 min</Text>
+<Text style={styles.liveText}>🟡 AO VIVO • MOSSORÓ • Roberto • Brunk • </Text>
 </View>
 <View style={styles.filters}>
 {[{ id: 'todos', label: 'Todos' },{ id: 'defeito', label: 'Defeitos' },{ id: 'servico', label: 'Serviços' }].map(f => (
