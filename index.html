@@ -42,7 +42,7 @@ button,input,select,textarea{font:inherit}
 .panel-card{background:white;border:1px solid var(--borda);border-radius:14px;padding:16px;margin-bottom:13px}
 .field{display:block;margin-top:14px;font-size:13px;font-weight:bold;color:var(--azul)}
 .field input,.field select,.field textarea{display:block;width:100%;margin-top:7px;padding:12px;border:1px solid #cbd5e1;border-radius:9px}
-.sec-title{font-size:11px;font-weight:900;color:var(--azul);background:#f1f5f9;padding:8px 10px;border-radius:8px;margin:16px 0 8px}
+.sec-title{font-size:11px;font-weight:900;background:#f1f5f9;padding:8px 10px;border-radius:8px;margin:14px 0 8px;color:var(--azul)}
 .tabs{position:fixed;bottom:0;left:0;right:0;display:flex;background:white;border-top:1px solid var(--borda);padding:8px 0;z-index:9999}
 .tab{flex:1;background:none;border:0;color:#64748b;font-size:10px;text-align:center}
 .tab span{display:block;font-size:18px}.tab.active{color:var(--azul);font-weight:900}
@@ -80,7 +80,7 @@ td{padding:8px;border-bottom:1px solid #e2e8f0;vertical-align:top}
 <form id="formAgendamento">
 <label class="field">Nome<input id="nome" required></label>
 <label class="field">Telefone<input id="telefone" type="tel" required></label>
-<label class="field">Empresa (opcional)<input id="empresa" placeholder="Ex: Clinica"></label>
+<label class="field">Empresa (opcional)<input id="empresa" placeholder="Ex: Clinica Sao Jose"></label>
 <label class="field">Serviço<select id="servico" required><option value="">Selecione</option><option>Instalação</option><option>Limpeza</option><option>Manutenção</option><option>Não gela</option><option>Outro</option></select></label>
 <label class="field">Data<input id="data" type="date" required></label>
 <label class="field">Endereço<input id="endereco" required></label>
@@ -92,32 +92,32 @@ td{padding:8px;border-bottom:1px solid #e2e8f0;vertical-align:top}
 <h2 class="section-title">📍 Seu técnico a caminho</h2>
 <p class="subtitle" id="rastreioStatus">Aguardando técnico iniciar...</p>
 <div id="mapRastreio"></div>
-<div class="notice">Link exclusivo deste atendimento.</div>
+<div class="notice">Link exclusivo deste atendimento. Quando o técnico clicar em "Cheguei no local", o compartilhamento para automaticamente.</div>
 </section>
 <section id="painel-tecnico" class="panel">
 <h2 class="section-title">👷 Painel do Técnico</h2>
-<p class="subtitle">Cadastre o atendimento aqui. Vai direto para o Admin.</p>
+<p class="subtitle">Cadastre aqui. Vai direto para o Admin.</p>
 <div class="panel-card">
 <div class="sec-title">👤 DADOS DO CLIENTE</div>
 <label class="field">Nome do Cliente<input id="tecNome" placeholder="Ex: Maria Silva"></label>
 <label class="field">Empresa<input id="tecEmpresa" placeholder="Ex: Loja Central"></label>
 <label class="field">Telefone<input id="tecTelefone" placeholder="84 99999-9999"></label>
 <label class="field">Endereço<input id="tecEndereco" placeholder="Rua, bairro, Mossoró"></label>
-<div class="sec-title">🔧 DADOS DO SERVIÇO</div>
+<div class="sec-title">🔧 SERVIÇO</div>
 <label class="field">Serviço<select id="tecServico"><option>Instalação</option><option>Limpeza</option><option>Manutenção</option><option>Não gela</option><option>Gotejando</option><option>Barulho</option><option>Não liga</option><option>Controle</option><option>Outro</option></select></label>
-<label class="field">Valor Orçamento R$<input id="tecValor" type="number" placeholder="Ex: 180"></label>
-<label class="field">O que foi feito<textarea id="tecFeito" rows="3" placeholder="Ex: Limpeza completa, carga de gás..."></textarea></label>
+<label class="field">Valor R$<input id="tecValor" type="number" placeholder="180"></label>
+<label class="field">O que foi feito<textarea id="tecFeito" rows="3" placeholder="Ex: Limpeza completa, gás..."></textarea></label>
 <input type="hidden" id="atendimentoId" value="atendimento-001">
-<button class="secondary" type="button" onclick="cadastrarTecnico()" style="background:#16a34a;margin-top:18px">💾 CADASTRAR NO ADMIN (pendente)</button>
-<button class="secondary" type="button" onclick="iniciarRastreio()" style="margin-top:10px">📍 INICIAR ROTA - Compartilhar GPS</button>
-<button class="secondary" type="button" style="background:#991b1b;margin-top:10px" onclick="finalizarRastreio()">✅ FINALIZAR ATENDIMENTO</button>
+<button class="secondary" type="button" onclick="cadastrarTecnico()" style="background:#16a34a;margin-top:18px">💾 CADASTRAR NO ADMIN</button>
+<button class="secondary" type="button" onclick="iniciarRastreio()" style="margin-top:10px">📍 INICIAR ROTA</button>
+<button class="secondary" type="button" style="background:#991b1b;margin-top:10px" onclick="finalizarRastreio()">✅ FINALIZAR</button>
 <p style="margin-top:12px;font-size:11px">Link cliente:</p>
 <input id="linkCliente" readonly style="width:100%;padding:10px;border:1px dashed #999;border-radius:8px;font-size:11px">
 </div>
 </section>
 <section id="admin" class="panel">
 <h2 class="section-title">🔒 Admin Exclusivo</h2>
-<p class="subtitle">Exporte todo mês para não sobrecarregar.</p>
+<p class="subtitle">Tudo que o técnico cadastrar fica aqui. Exporte todo mês.</p>
 <div class="kpi">
 <div><p style="font-size:10px;color:#64748b">TOTAL</p><b id="kpi-total">0</b></div>
 <div><p style="font-size:10px;color:#d97706">PENDENTES</p><b id="kpi-pend">0</b></div>
@@ -166,19 +166,18 @@ function getAtendimentos(){ try{return JSON.parse(localStorage.getItem('nf_atend
 function salvarAtendimentos(l){ localStorage.setItem('nf_atend', JSON.stringify(l)); }
 function registrarAtendimento(obj){
 let lista=getAtendimentos();
-let idx=lista.findIndex(a=>a.id===obj.id);
-if(idx>=0){ lista[idx]={...lista[idx],...obj}; } else { lista.unshift(obj); }
+let idx=lista.findIndex(function(a){return a.id===obj.id});
+if(idx>=0){ lista[idx]=Object.assign({},lista[idx],obj); } else { lista.unshift(obj); }
 salvarAtendimentos(lista);
 renderAdmin();
 }
 function renderAdmin(){
 let dados=getAtendimentos();
-let el=document.getElementById('kpi-total');
-if(!el) return;
-el.innerText=dados.length;
-document.getElementById('kpi-pend').innerText=dados.filter(a=>a.status==='pendente').length;
-document.getElementById('kpi-rota').innerText=dados.filter(a=>a.status==='em_rota').length;
-document.getElementById('kpi-fat').innerText='R$ '+dados.filter(a=>a.status==='finalizado').reduce((s,a)=>s+(parseFloat(a.valor)||0),0);
+if(!document.getElementById('kpi-total')) return;
+document.getElementById('kpi-total').innerText=dados.length;
+document.getElementById('kpi-pend').innerText=dados.filter(function(a){return a.status==='pendente'}).length;
+document.getElementById('kpi-rota').innerText=dados.filter(function(a){return a.status==='em_rota'}).length;
+document.getElementById('kpi-fat').innerText='R$ '+dados.filter(function(a){return a.status==='finalizado'}).reduce(function(s,a){return s+(parseFloat(a.valor)||0)},0);
 let tbody=document.getElementById('tbodyAdmin');
 tbody.innerHTML=dados.map(function(a){
 return '<tr><td><b>'+(a.data||'')+'</b><br><span style="font-size:10px">'+(a.hora||'')+'</span></td><td><b>'+(a.nome||'')+'</b><br>'+(a.telefone||'')+'<br><span style="color:#0f2f3e;font-weight:800">'+(a.empresa||'')+'</span><br><span style="font-size:10px">'+(a.endereco||'')+'</span></td><td>'+(a.servico||'')+'</td><td><span class="pill '+(a.status==='pendente'?'p-pend':a.status==='em_rota'?'p-rota':'p-fim')+'">'+(a.status||'')+'</span></td><td><b>'+(a.valor?'R$ '+a.valor:'-')+'</b></td><td style="max-width:150px;font-size:11px">'+(a.feito||'-')+'</td><td><button onclick="excluirAtend(\''+a.id+'\')" style="background:none;border:0;color:#dc2626;cursor:pointer">x</button></td></tr>';
@@ -190,12 +189,11 @@ let dados=getAtendimentos();
 if(!dados.length){ alert('Nada para exportar'); return; }
 let csv='Data,Hora,Nome,Empresa,Telefone,Endereco,Servico,Status,Valor,Feito\n';
 dados.forEach(function(a){
-let linha=[a.data||'',a.hora||'',(a.nome||'').replace(/,/g,' '),(a.empresa||'').replace(/,/g,' '),a.telefone||'',(a.endereco||'').replace(/,/g,' '),a.servico||'',a.status||'',a.valor||0,(a.feito||'').replace(/,/g,' ')].join(',');
-csv+=linha+'\n';
+csv+=[a.data||'',a.hora||'',(a.nome||'').replace(/,/g,' '),(a.empresa||'').replace(/,/g,' '),a.telefone||'',(a.endereco||'').replace(/,/g,' '),a.servico||'',a.status||'',a.valor||0,(a.feito||'').replace(/,/g,' ')].join(',')+'\n';
 });
 let blob=new Blob([csv],{type:'text/csv'});
 let url=URL.createObjectURL(blob);
-let aEl=document.createElement('a'); aEl.href=url; aEl.download='nosso-frio-'+new Date().toISOString().slice(0,10)+'.csv'; aEl.click();
+let el=document.createElement('a'); el.href=url; el.download='nosso-frio-'+new Date().toISOString().slice(0,10)+'.csv'; el.click();
 }
 function limparAntigos(){
 if(!confirm('Apagar +30 dias? Exporte antes!')) return;
@@ -209,19 +207,13 @@ salvarAtendimentos(filtrada); renderAdmin(); alert('Antigos apagados!');
 function criarCartoes(){
 grid.innerHTML="";
 defeitos.forEach(function(serv){
-const card=document.createElement("button");
+let card=document.createElement("button");
 card.type="button"; card.className="card";
-const tag=document.createElement("span");
-tag.className="tag "+(serv.k==="SERVIÇO"?"ser":"def");
-tag.textContent=serv.k;
-const check=document.createElement("span");
-check.className="check"; check.textContent="✓";
-const ic=document.createElement("div");
-ic.className="ic"; ic.textContent=serv.i;
-const ct=document.createElement("div");
-ct.className="ct"; ct.textContent=serv.t;
-const cs=document.createElement("div");
-cs.className="cs"; cs.textContent=serv.s;
+let tag=document.createElement("span"); tag.className="tag "+(serv.k==="SERVIÇO"?"ser":"def"); tag.textContent=serv.k;
+let check=document.createElement("span"); check.className="check"; check.textContent="✓";
+let ic=document.createElement("div"); ic.className="ic"; ic.textContent=serv.i;
+let ct=document.createElement("div"); ct.className="ct"; ct.textContent=serv.t;
+let cs=document.createElement("div"); cs.className="cs"; cs.textContent=serv.s;
 card.appendChild(tag); card.appendChild(check); card.appendChild(ic); card.appendChild(ct); card.appendChild(cs);
 card.addEventListener("click",function(){
 selecionado=serv;
@@ -269,7 +261,7 @@ let id='atendimento-'+Date.now();
 document.getElementById('atendimentoId').value=id;
 let agora=new Date();
 registrarAtendimento({id:id,nome:nome,telefone:tel,empresa:emp,servico:serv,data:data,[STRIPPED]'pendente',valor:0,feito:'',quando:agora.toLocaleString()});
-let msg="Olá! Agendamento NOSSO FRIO\nNome:"+nome+"\nEmpresa:"+emp+"\nTel:"+tel+"\nServiço:"+serv+"\nData:"+data+"\nEnd:"+end;
+let msg="Olá! Agendamento NOSSO FRIO\nNome:"+nome+"\nEmpresa:"+emp+"\nTel:"+tel+"\nServiço:"+serv+"\nData:"+data+"\nEnd:"+end+"\nID:"+id;
 abrirWhatsApp(msg);
 });
 function cadastrarTecnico(){
