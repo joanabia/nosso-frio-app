@@ -39,26 +39,24 @@ body{background:var(--fundo);min-height:100vh}
 .tab.active{color:var(--azul);font-weight:900}.tab span{display:block;font-size:18px}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th{font-size:10px;color:#64748b;text-align:left;padding:8px;background:#f8fafc}
-td{padding:8px;border-bottom:1px solid #e2e8f0}
+td{padding:8px;border-bottom:1px solid #e2e8f0;vertical-align:top}
 .pill{font-size:10px;font-weight:900;padding:3px 7px;border-radius:20px}
 .p-pend{background:#fef3c7;color:#92400e}.p-rota{background:#dbeafe;color:#1e40af}.p-fim{background:#dcfce7;color:#166534}
 .btn-excel{background:#107c41;color:#fff;border:0;padding:10px 14px;border-radius:8px;font-weight:800;cursor:pointer}
 .btn-limpar{background:#fff;color:#991b1b;border:1px solid #fecaca;padding:10px 14px;border-radius:8px;font-weight:800;cursor:pointer}
 .leaflet-routing-container{display:none!important}
-.pulse{background:#16a34a;color:#fff;border-radius:20px;padding:4px 8px;font-size:9px;animation:pisca 1s infinite}
-@keyframes pisca{0%{opacity:1}50%{opacity:0.6}100%{opacity:1}}
 </style>
 </head>
 <body>
 
 <header class="header">
   <div class="logo"><div class="logo-icon">❄</div><div><h1>NOSSO FRIO</h1><span style="font-size:10px">INSTALAÇÃO • LIMPEZA • MANUTENÇÃO</span></div></div>
-  <div class="badge" id="statusBadge">MOSSORÓ - RN</div>
+  <div class="badge">MOSSORÓ - RN</div>
 </header>
 
-<div class="info"><div><strong>Região:</strong> Mossoró - RN</div><div><strong id="infoStatus">Atendimento: Sob consulta</strong></div></div>
+<div class="info"><div><strong>Região:</strong> Mossoró - RN</div><div><strong>Atendimento:</strong> Sob consulta</div></div>
 <div id="map"></div>
-<p style="background:#fff;padding:8px 13px;font-size:11px;color:#475569"><strong>Sobre o mapa:</strong> Referência de Mossoró. Rastreio ao vivo com link exclusivo funciona em 2 celulares.</p>
+<p style="background:#fff;padding:8px 13px;font-size:11px;color:#475569"><strong>Sobre o mapa:</strong> Referência de Mossoró. Rastreio real com rota do técnico até o cliente.</p>
 
 <main class="page">
 
@@ -79,29 +77,27 @@ td{padding:8px;border-bottom:1px solid #e2e8f0}
       <label class="field">Empresa (opcional)<input id="empresa"></label>
       <label class="field">Serviço<select id="servico" required><option value="">Selecione</option><option>Instalação</option><option>Limpeza</option><option>Manutenção</option><option>Não gela</option><option>Outro</option></select></label>
       <label class="field">Data<input id="data" type="date" required></label>
-      <label class="field">Endereço completo<input id="endereco" placeholder="Rua, número, bairro" required></label>
+      <label class="field">Endereço<input id="endereco" required></label>
       <button class="secondary whatsapp" type="submit">Enviar pelo WhatsApp</button>
     </form>
   </div>
 </section>
 
 <section id="rastreio" class="panel">
-  <h2 class="section-title">📍 Seu técnico a caminho <span class="pulse" id="pulseAoVivo" style="display:none">AO VIVO</span></h2>
-  <p class="subtitle" id="rastreioStatus">Aguardando técnico iniciar o deslocamento...</p>
-  <div class="panel-card" id="cardRastreioInfo" style="display:none">
+  <h2 class="section-title">📍 Seu técnico a caminho</h2>
+  <p class="subtitle" id="rastreioStatus">Aguardando técnico iniciar...</p>
+  <div class="panel-card" id="boxRastreio" style="display:none">
     <p style="font-size:12px"><strong>Cliente:</strong> <span id="rCliente"></span></p>
-    <p style="font-size:12px"><strong>Endereço:</strong> <span id="rEndereco"></span></p>
-    <p style="font-size:11px"><strong>CEP:</strong> <span id="rCep"></span> • <span id="rBairro"></span> Nº <span id="rNumero"></span> • <span id="rCidade"></span></p>
-    <p style="font-size:12px;margin-top:6px"><strong>Distância:</strong> <span id="rDist">--</span> | <strong>Tempo:</strong> <span id="rTempo">--</span></p>
-    <p style="font-size:11px;color:#64748b">Atualizado: <span id="rUpdate"></span> - Localização atual</p>
-    <div id="avisoChegada" style="display:none;margin-top:10px;background:#16a34a;color:#fff;padding:12px;border-radius:10px;text-align:center;font-weight:900">🔔 SEU TÉCNICO ESTÁ CHEGANDO! JÁ PODE ABRIR O PORTÃO</div>
+    <p style="font-size:11px"><span id="rEnderecoCompleto"></span></p>
+    <p style="font-size:12px;margin-top:6px"><strong id="rDist"></strong> | <strong id="rTempo"></strong></p>
+    <div id="avisoPortao" style="display:none;margin-top:8px;background:#16a34a;color:#fff;padding:10px;border-radius:8px;text-align:center;font-weight:900">🔔 CHEGANDO! ABRA O PORTÃO</div>
   </div>
   <div id="mapRastreio"></div>
 </section>
 
 <section id="painel-tecnico" class="panel">
   <h2 class="section-title">👷 Painel do Técnico</h2>
-  <p class="subtitle">Cadastre aqui com endereço completo. Vai direto para o Admin e gera rota em 2 celulares.</p>
+  <p class="subtitle">Cadastre aqui. Vai direto para o Admin com endereço completo.</p>
   <div class="panel-card">
     <div class="sec-title">👤 DADOS DO CLIENTE</div>
     <label class="field">Nome<input id="tecNome"></label>
@@ -111,7 +107,7 @@ td{padding:8px;border-bottom:1px solid #e2e8f0}
     <div class="sec-title">📍 ENDEREÇO COMPLETO</div>
     <div class="field-row">
       <label class="field">CEP<input id="tecCep" placeholder="59600-000" onblur="buscarCep()"></label>
-      <label class="field">Número da residência<input id="tecNumero" placeholder="Ex: 123"></label>
+      <label class="field">Número<input id="tecNumero" placeholder="123"></label>
     </div>
     <label class="field">Rua / Avenida<input id="tecRua"></label>
     <div class="field-row">
@@ -124,17 +120,17 @@ td{padding:8px;border-bottom:1px solid #e2e8f0}
     <label class="field">Serviço<select id="tecServico"><option>Instalação</option><option>Limpeza</option><option>Manutenção</option><option>Não gela</option><option>Gotejando</option><option>Barulho</option><option>Não liga</option><option>Controle</option><option>Outro</option></select></label>
     <label class="field">Valor R$<input id="tecValor" type="number"></label>
     <label class="field">O que foi feito<textarea id="tecFeito" rows="3"></textarea></label>
-    <input type="hidden" id="atendimentoId" value="atendimento-001">
-    <button class="secondary" style="background:#16a34a;margin-top:16px" onclick="cadastrarTecnico()">💾 CADASTRAR NO ADMIN + LOCALIZAR</button>
-    <button class="secondary" style="margin-top:10px" onclick="iniciarRastreio()">📍 INICIAR ROTA EM 2 CELULARES</button>
+    <input type="hidden" id="atendimentoId" value="">
+    <button class="secondary" style="background:#16a34a;margin-top:16px" onclick="cadastrarTecnico()">💾 CADASTRAR NO ADMIN</button>
+    <button class="secondary" style="margin-top:10px" onclick="iniciarRastreio()">📍 INICIAR ROTA</button>
     <button class="secondary" style="background:#991b1b;margin-top:10px" onclick="finalizarRastreio()">✅ FINALIZAR</button>
-    <input id="linkCliente" readonly style="width:100%;margin-top:10px;padding:10px;border:1px dashed #999;border-radius:8px;font-size:11px">
-    <button class="secondary whatsapp" style="margin-top:8px" onclick="enviarLinkWhatsapp()">📲 ENVIAR LINK DE ACOMPANHAMENTO PARA CLIENTE</button>
+    <input id="linkCliente" readonly style="width:100%;margin-top:10px;padding:10px;border:1px dashed #999;border-radius:8px;font-size:11px" placeholder="Link do rastreio aparece aqui">
+    <button class="secondary whatsapp" style="margin-top:8px" onclick="enviarLinkCliente()">📲 ENVIAR LINK PARA CLIENTE</button>
   </div>
 </section>
 
 <section id="admin" class="panel">
-  <h2 class="section-title">🔒 Admin Exclusivo</h2>
+  <h2 class="section-title">🔒 Admin Exclusivo - Senha 1234</h2>
   <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0">
     <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px"><p style="font-size:10px">TOTAL</p><b id="kpi-total">0</b></div>
     <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px"><p style="font-size:10px">PENDENTES</p><b id="kpi-pend">0</b></div>
@@ -146,7 +142,10 @@ td{padding:8px;border-bottom:1px solid #e2e8f0}
     <button class="btn-limpar" onclick="limparAntigos()">🗑 Limpar +30 dias</button>
   </div>
   <div class="panel-card" style="padding:0;overflow:auto">
-    <table><thead><tr><th>Data</th><th>Cliente</th><th>Serviço</th><th>Status</th><th>Valor</th><th>Feito</th></tr></thead><tbody id="tbodyAdmin"></tbody></table>
+    <table>
+      <thead><tr><th>Data</th><th>Cliente / Endereço Completo</th><th>Serviço</th><th>Status</th><th>Valor</th><th>Feito</th></tr></thead>
+      <tbody id="tbodyAdmin"></tbody>
+    </table>
   </div>
 </section>
 
@@ -161,54 +160,42 @@ td{padding:8px;border-bottom:1px solid #e2e8f0}
 </nav>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 <script>
-// PARA FUNCIONAR EM 2 CELULARES COLE SEU FIREBASE AQUI
-const firebaseConfig = {
-  apiKey: "COLE_AQUI",
-  authDomain: "COLE_AQUI",
-  databaseURL: "COLE_AQUI",
-  projectId: "COLE_AQUI",
-  storageBucket: "COLE_AQUI",
-  messagingSenderId: "COLE_AQUI",
-  appId: "COLE_AQUI"
-};
-let db=null, useFirebase=false;
-if(firebaseConfig.apiKey!=="COLE_AQUI"){firebase.initializeApp(firebaseConfig);db=firebase.database();useFirebase=true;document.getElementById("statusBadge").innerText="ONLINE • 2 CELULARES";document.getElementById("statusBadge").style.background="#16a34a";document.getElementById("statusBadge").style.color="#fff";document.getElementById("infoStatus").innerText="Rastreio: Ao vivo em 2 celulares"}
-
-const WHATSAPP="5584998407706";const SENHA_ADMIN="1234";
+const WHATSAPP="5584998407706";
+const SENHA_ADMIN="1234";
 const defeitos=[{t:"Não gela",s:"Não está gelando",i:"❄",k:"DEFEITO"},{t:"Gotejando",s:"Vazamento",i:"💧",k:"DEFEITO"},{t:"Barulho",s:"Barulho",i:"🔊",k:"DEFEITO"},{t:"Não liga",s:"Não liga",i:"⏻",k:"DEFEITO"},{t:"Limpeza",s:"Limpeza",i:"✨",k:"SERVIÇO"},{t:"Instalação",s:"Instalação",i:"🔧",k:"SERVIÇO"},{t:"Manutenção",s:"Manutenção",i:"🛠",k:"SERVIÇO"},{t:"Controle",s:"Controle",i:"🎛",k:"DEFEITO"}];
-let selecionado=null, watchId=null, mapaRastreio=null, routingControl=null, intervaloRastreio=null;
+let selecionado=null;let watchId=null;let mapaRastreio=null;let routing=null;let timer=null;
 
 function getAtend(){try{return JSON.parse(localStorage.getItem("nf_atend")||"[]")}catch(e){return[]}}
-function saveAtend(lista){localStorage.setItem("nf_atend",JSON.stringify(lista))}
-function registrarAtendimento(obj){let lista=getAtend();let idx=lista.findIndex(a=>a.id===obj.id);if(idx>=0)lista[idx]={...lista[idx],...obj};else lista.unshift(obj);saveAtend(lista);if(useFirebase) db.ref("atendimentos/"+obj.id).update(obj); renderAdmin()}
+function saveAtend(l){localStorage.setItem("nf_atend",JSON.stringify(l))}
+function registrarAtendimento(o){let l=getAtend();let i=l.findIndex(a=>a.id===o.id);if(i>=0)l[i]={...l[i],...o};else l.unshift(o);saveAtend(l);renderAdmin()}
+
 async function buscarCep(){let cep=document.getElementById("tecCep").value.replace(/\D/g,'');if(cep.length!==8)return;try{let r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);let d=await r.json();if(!d.erro){document.getElementById("tecRua").value=d.logradouro;document.getElementById("tecBairro").value=d.bairro;document.getElementById("tecCidade").value=d.localidade}}catch(e){}}
 async function geocodificar(q){try{let r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`);let j=await r.json();if(j.length>0)return{lat:+j[0].lat,lng:+j[0].lon}}catch(e){}return null}
 
 function renderAdmin(){
   let dados=getAtend();
-  if(!document.getElementById("kpi-total")) return;
   document.getElementById("kpi-total").innerText=dados.length;
   document.getElementById("kpi-pend").innerText=dados.filter(a=>a.status==="pendente").length;
   document.getElementById("kpi-rota").innerText=dados.filter(a=>a.status==="em_rota").length;
   document.getElementById("kpi-fat").innerText="R$ "+dados.filter(a=>a.status==="finalizado").reduce((s,a)=>s+(parseFloat(a.valor)||0),0);
   document.getElementById("tbodyAdmin").innerHTML=dados.map(a=>`
     <tr>
-      <td><b>${a.data||""}</b><br><span style="font-size:10px">${a.horario||""}</span></td>
-      <td><b>${a.nome||""}</b><br>${a.telefone||""}<br><span style="font-weight:800">${a.empresa||""}</span><br><span style="font-size:10px">${a.enderecoCompleto||a.endereco||""}<br>CEP:${a.cep||"-"} Nº${a.numero||""} ${a.bairro||""}</span></td>
+      <td><b>${a.data||""}</b><br><span style="font-size:10px">${a.horario||""}</span><br><span style="font-size:9px">${a.id||""}</span></td>
+      <td><b>${a.nome||""}</b><br>${a.telefone||""}<br><b style="color:#0f2f3e">${a.empresa||""}</b><br><span style="font-size:11px">${a.enderecoCompleto||a.endereco||""}</span><br><span style="font-size:10px;background:#f1f5f9;padding:2px 6px;border-radius:4px">CEP: ${a.cep||"-"} | Nº ${a.numero||"-"} | ${a.bairro||""} | ${a.cidade||""}</span>${a.complemento?`<br><span style="font-size:10px">Ref: ${a.complemento}</span>`:''}</td>
       <td>${a.servico||""}</td>
       <td><span class="pill ${a.status==="pendente"?"p-pend":a.status==="em_rota"?"p-rota":"p-fim"}">${a.status||""}</span></td>
       <td>${a.valor?"R$ "+a.valor:"-"}</td>
-      <td style="font-size:11px">${a.feito||"-"}<br><a href="?rastreio=${a.id}" style="font-size:10px">Ver rota</a></td>
-    </tr>`).join("")||`<tr><td colspan="6" style="text-align:center;padding:20px;color:#94a3b8">Nenhum ainda</td></tr>`;
+      <td style="font-size:11px">${a.feito||"-"}<br><a href="?rastreio=${a.id}" style="font-size:10px;color:#0f2f3e">Ver rota</a></td>
+    </tr>`).join("")||`<tr><td colspan="6" style="text-align:center;padding:20px;color:#94a3b8">Nenhum atendimento cadastrado ainda pelo técnico</td></tr>`;
 }
 
-function exportarCSV(){let dados=getAtend();if(!dados.length){alert("Nada para exportar");return}let csv="Data,Horario,Nome,Empresa,Telefone,CEP,Rua,Numero,Bairro,Cidade,EnderecoCompleto,Servico,Status,Valor,Feito\n";dados.forEach(a=>{csv+=`${a.data||""},${a.horario||""},${(a.nome||"").replace(/,/g," ")},${(a.empresa||"").replace(/,/g," ")},${a.telefone||""},${a.cep||""},${(a.rua||"").replace(/,/g," ")},${a.numero||""},${(a.bairro||"").replace(/,/g," ")},${a.cidade||""},${(a.enderecoCompleto||"").replace(/,/g," ")},${a.servico||""},${a.status||""},${a.valor||0},${(a.feito||"").replace(/,/g," ")}\n`});let blob=new Blob([csv],{type:"text/csv"});let url=URL.createObjectURL(blob);let el=document.createElement("a");el.href=url;el.download="nosso-frio-"+new Date().toISOString().slice(0,10)+".csv";el.click();URL.revokeObjectURL(url)}
-function limparAntigos(){if(!confirm("Apagar +30 dias? Exporte antes!"))return;let lista=getAtend();let agora=new Date();let filtrada=lista.filter(a=>{try{return (agora-new Date(a.quando))/(1000*60*60*24))<=30}catch(e){return true}});saveAtend(filtrada);renderAdmin();alert("Antigos apagados!")}
-function criarCartoes(){let grid=document.getElementById("grid");grid.innerHTML="";defeitos.forEach(serv=>{let card=document.createElement("button");card.className="card";card.type="button";card.innerHTML=`<span class="tag ${serv.k==="SERVIÇO"?"ser":"def"}">${serv.k}</span><div style="font-size:27px">${serv.i}</div><div style="font-weight:800">${serv.t}</div><div style="font-size:11px;color:#64748b">${serv.s}</div>`;card.addEventListener("click",()=>{selecionado=serv;document.querySelectorAll(".card").forEach(c=>c.classList.remove("selected"));card.classList.add("selected");document.getElementById("selectedInfo").style.display="block";document.getElementById("selectedInfo").textContent="Selecionado: "+serv.t;document.getElementById("cta").disabled=false;document.getElementById("cta").innerHTML="SOLICITAR ATENDIMENTO<br><small>"+serv.t+" - WhatsApp</small>"});grid.appendChild(card)})}
+function exportarCSV(){let d=getAtend();if(!d.length){alert("Nada para exportar");return}let csv="Data,Horario,ID,Nome,Empresa,Telefone,CEP,Rua,Numero,Bairro,Cidade,Complemento,EnderecoCompleto,Servico,Status,Valor,Feito\n";d.forEach(a=>{csv+=`${a.data||""},${a.horario||""},${a.id||""},${(a.nome||"").replace(/,/g," ")},${(a.empresa||"").replace(/,/g," ")},${a.telefone||""},${a.cep||""},${(a.rua||"").replace(/,/g," ")},${a.numero||""},${(a.bairro||"").replace(/,/g," ")},${a.cidade||""},${(a.complemento||"").replace(/,/g," ")},${(a.enderecoCompleto||"").replace(/,/g," ")},${a.servico||""},${a.status||""},${a.valor||0},${(a.feito||"").replace(/,/g," ")}\n`});let blob=new Blob([csv],{type:"text/csv"});let url=URL.createObjectURL(blob);let a2=document.createElement("a");a2.href=url;a2.download="nosso-frio-"+new Date().toISOString().slice(0,10)+".csv";a2.click();URL.revokeObjectURL(url)}
+function limparAntigos(){if(!confirm("Apagar +30 dias? Exporte antes!"))return;let l=getAtend();let agora=new Date();let f=l.filter(a=>{try{return (agora-new Date(a.quando))/(1000*60*60*24))<=30}catch(e){return true}});saveAtend(f);renderAdmin();alert("Antigos apagados!")}
+
+function criarCartoes(){let grid=document.getElementById("grid");grid.innerHTML="";defeitos.forEach(s=>{let c=document.createElement("button");c.className="card";c.type="button";c.innerHTML=`<span class="tag ${s.k==="SERVIÇO"?"ser":"def"}">${s.k}</span><div style="font-size:27px">${s.i}</div><div style="font-weight:800">${s.t}</div><div style="font-size:11px;color:#64748b">${s.s}</div>`;c.addEventListener("click",()=>{selecionado=s;document.querySelectorAll(".card").forEach(b=>b.classList.remove("selected"));c.classList.add("selected");document.getElementById("selectedInfo").style.display="block";document.getElementById("selectedInfo").textContent="Selecionado: "+s.t;document.getElementById("cta").disabled=false;document.getElementById("cta").innerHTML="SOLICITAR ATENDIMENTO<br><small>"+s.t+" - WhatsApp</small>"});grid.appendChild(c)})}
+
 function abrirWhatsApp(msg){window.open("https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(msg),"_blank")}
 
 function chamar(){
@@ -216,24 +203,32 @@ function chamar(){
   let id="atendimento-"+Date.now();
   document.getElementById("atendimentoId").value=id;
   let agora=new Date();
-  registrarAtendimento({id,nome:"Cliente via Início",telefone:"",empresa:"",endereco:"Mossoró - RN",enderecoCompleto:"Mossoró - RN",servico:selecionado.t,data:agora.toLocaleDateString("pt-BR"),horario:agora.toLocaleTimeString("pt-BR"),status:"pendente",valor:0,feito:"",quando:agora.toISOString()});
-  let msg=`❄️ *NOSSO FRIO - Mossoró/RN* ❄️
+  registrarAtendimento({id,nome:"Cliente via Início",telefone:"",empresa:"",endereco:"Mossoró - RN",enderecoCompleto:"Mossoró - RN",servico:selecionado.t,data:agora.toLocaleDateString("pt-BR"),[STRIPPED] *NOSSO FRIO - Mossoró/RN* ❄️
 
 Olá! Preciso de atendimento técnico.
 
-*Serviço solicitado:* ${selecionado.t} - ${selecionado.s}
-*Descrição:* Meu ar-condicionado está com problema de ${selecionado.t.toLowerCase()}
+🛠️ *Serviço:* ${selecionado.t} - ${selecionado.s}
+📋 *Protocolo:* ${id}
+📍 *Região:* Mossoró - RN
+🕒 ${agora.toLocaleDateString("pt-BR")} às ${agora.toLocaleTimeString("pt-BR")}
 
-*Protocolo:* ${id}
-*Região:* Mossoró - RN
-*Data:* ${agora.toLocaleDateString("pt-BR")} às ${agora.toLocaleTimeString("pt-BR")}
+Meu ar está com problema de *${selecionado.t.toLowerCase()}*. Pode me informar disponibilidade e valores?
 
-Pode me informar disponibilidade e valor?
-Aguardo retorno. Obrigado! 🙏`;
+Aguardo retorno! 🙏`;
   abrirWhatsApp(msg);
 }
 
-function mostrarPainel(nome){if(nome==="admin"){let s=prompt("Senha Admin (padrão 1234):");if(s!==SENHA_ADMIN){alert("Senha incorreta");return}renderAdmin()}document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===nome));document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===nome));if(nome==="inicio"&&window.mapa)setTimeout(()=>window.mapa.invalidateSize(),200);if(nome==="rastreio")setTimeout(()=>iniciarMapaRastreio(),200)}
+function mostrarPainel(nome){
+  if(nome==="admin"){
+    let s=prompt("Senha Admin (padrão 1234):");
+    if(s!==SENHA_ADMIN){alert("Senha incorreta! Use 1234");return}
+    renderAdmin();
+  }
+  document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===nome));
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===nome));
+  if(nome==="inicio"&&window.mapa)setTimeout(()=>window.mapa.invalidateSize(),200);
+  if(nome==="rastreio")setTimeout(()=>iniciarMapaRastreio(),200);
+}
 document.querySelectorAll(".tab").forEach(b=>{b.addEventListener("click",()=>mostrarPainel(b.dataset.tab))});
 
 document.getElementById("formAgendamento").addEventListener("submit",e=>{
@@ -250,20 +245,17 @@ document.getElementById("formAgendamento").addEventListener("submit",e=>{
   registrarAtendimento({id,nome,telefone:tel,empresa:emp,endereco:end,enderecoCompleto:end,servico:serv,data,horario:agora.toLocaleTimeString("pt-BR"),status:"pendente",valor:0,feito:"",quando:agora.toISOString()});
   let msg=`📅 *AGENDAMENTO - NOSSO FRIO* 📅
 
-Olá! Gostaria de agendar um atendimento.
+Olá! Quero agendar um atendimento.
 
-*Dados do cliente:*
-👤 Nome: ${nome}
-${emp?`🏢 Empresa: ${emp}\n`:''}📞 Telefone: ${tel}
-📍 Endereço: ${end}
+👤 *Nome:* ${nome}
+${emp?`🏢 *Empresa:* ${emp}\n`:''}📞 *Telefone:* ${tel}
+📍 *Endereço:* ${end}
 
-*Serviço:* ${serv}
-*Data desejada:* ${data}
+🔧 *Serviço:* ${serv}
+📆 *Data desejada:* ${data}
+📋 *Protocolo:* ${id}
 
-*Protocolo:* ${id}
-
-Pode confirmar a disponibilidade nessa data?
-Obrigado! ❄️`;
+Pode confirmar disponibilidade? ❄️`;
   abrirWhatsApp(msg);
 });
 
@@ -282,32 +274,30 @@ async function cadastrarTecnico(){
   let servico=document.getElementById("tecServico").value;
   let valor=document.getElementById("tecValor").value;
   let feito=document.getElementById("tecFeito").value;
-  if(!nome||!rua||!numero){alert("Preencha Nome, Rua e Número");return}
+  if(!nome||!rua||!numero){alert("Preencha Nome, Rua e Número da residência");return}
   let completo=`${rua}, ${numero}, ${bairro}, ${cidade}, ${cep}${comp?' - '+comp:''}`;
   let coords=await geocodificar(completo);
-  if(!coords){alert("Endereço não encontrado. Confira CEP/Bairro");return}
+  if(!coords){alert("Endereço não encontrado. Verifique CEP, rua e bairro");return}
   let agora=new Date();
-  registrarAtendimento({id,nome,empresa,telefone,cep,rua,numero,bairro,cidade,complemento:comp,endereco:rua,enderecoCompleto:completo,lat:coords.lat,lng:coords.lng,servico,data:agora.toLocaleDateString("pt-BR"),horario:agora.toLocaleTimeString("pt-BR"),status:"pendente",valor:parseFloat(valor)||0,feito,quando:agora.toISOString()});
-  alert("✅ Cadastrado no Admin! Endereço: "+completo);
+  registrarAtendimento({id,nome,empresa,telefone,cep,rua,numero,bairro,cidade,complemento:comp,endereco:rua,enderecoCompleto:completo,lat:coords.lat,lng:coords.lng,servico,data:agora.toLocaleDateString("pt-BR"),[STRIPPED]
+  alert("✅ Cadastrado no Admin com endereço completo!\n"+completo);
 }
 
 function getId(){let u=new URLSearchParams(window.location.search);return u.get("rastreio")||document.getElementById("atendimentoId").value}
 
 function iniciarRastreio(){
-  let id=getId();if(!id){alert("Cadastre o cliente primeiro");return}
-  let atend=getAtend().find(x=>x.id===id);if(!atend||!atend.lat){alert("Cliente sem coordenadas. Clique em CADASTRAR");return}
-  if(!navigator.geolocation){alert("GPS não disponível");return}
+  let id=getId();if(!id){alert("Cadastre o cliente primeiro no painel do técnico");return}
+  let atend=getAtend().find(x=>x.id===id);if(!atend||!atend.lat){alert("Cliente sem coordenadas. Clique em CADASTRAR NO ADMIN primeiro");return}
+  if(!navigator.geolocation){alert("GPS não disponível neste dispositivo");return}
   localStorage.setItem("nf_status_"+id,"a_caminho");
   let lista=getAtend();let a=lista.find(x=>x.id===id);if(a){a.status="em_rota";saveAtend(lista);renderAdmin()}
   let link=location.origin+location.pathname+"?rastreio="+encodeURIComponent(id);
   document.getElementById("linkCliente").value=link;
   if(watchId) navigator.geolocation.clearWatch(watchId);
   watchId=navigator.geolocation.watchPosition(pos=>{
-    let d={lat:pos.coords.latitude,lng:pos.coords.longitude,quando:new Date().toISOString()};
+    let d={lat:pos.coords.latitude,lng:pos.coords.longitude};
     localStorage.setItem("nf_pos_"+id,JSON.stringify(d));
-    if(useFirebase) db.ref("atendimentos/"+id+"/posTec").set(d);
-    if(useFirebase) db.ref("atendimentos/"+id+"/status").set("em_rota");
-    atualizar(d, atend);
+    atualizarRota(d, atend);
   },err=>{alert("Erro GPS: "+err.message)},{enableHighAccuracy:true,maximumAge:3000,timeout:10000});
   mostrarPainel("rastreio");
 }
@@ -322,7 +312,6 @@ function finalizarRastreio(){
   localStorage.removeItem("nf_pos_"+id);
   localStorage.setItem("nf_status_"+id,"concluido");
   let lista=getAtend();let a=lista.find(x=>x.id===id);if(a){a.status="finalizado";a.valor=parseFloat(valor)||0;a.feito=feito;saveAtend(lista)}
-  if(useFirebase){db.ref("atendimentos/"+id+"/status").set("finalizado");db.ref("atendimentos/"+id+"/posTec").remove()}
   document.getElementById("rastreioStatus").textContent="Finalizado R$ "+valor+" - "+feito;
   alert("Finalizado! R$ "+valor+" registrado no Admin.");
   renderAdmin();
@@ -334,73 +323,60 @@ function iniciarMapaRastreio(){
     mapaRastreio=L.map("mapRastreio").setView([-5.1875,-37.3442],13);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(mapaRastreio);
   }else mapaRastreio.invalidateSize();
-  let id=getId(); if(!id) return;
+  let id=getId();if(!id)return;
   let atend=getAtend().find(x=>x.id===id);
-  if(atend){document.getElementById("cardRastreioInfo").style.display="block";document.getElementById("rCliente").innerText=atend.nome;document.getElementById("rEndereco").innerText=atend.enderecoCompleto;document.getElementById("rCep").innerText=atend.cep;document.getElementById("rBairro").innerText=atend.bairro;document.getElementById("rNumero").innerText=atend.numero;document.getElementById("rCidade").innerText=atend.cidade}
-
-  if(useFirebase){
-    db.ref("atendimentos/"+id).on("value",snap=>{
-      let d=snap.val(); if(!d||!d.posTec) return;
-      document.getElementById("pulseAoVivo").style.display="inline-block";
-      atualizar(d.posTec, d);
-    });
-  } else {
-    if(intervaloRastreio) clearInterval(intervaloRastreio);
-    intervaloRastreio=setInterval(()=>{
-      let raw=localStorage.getItem("nf_pos_"+id);
-      if(raw){try{atualizar(JSON.parse(raw), atend)}catch(e){}}
-    },1500);
+  if(atend){
+    document.getElementById("boxRastreio").style.display="block";
+    document.getElementById("rCliente").innerText=atend.nome;
+    document.getElementById("rEnderecoCompleto").innerText=atend.enderecoCompleto;
   }
+  if(timer) clearInterval(timer);
+  timer=setInterval(()=>{
+    let raw=localStorage.getItem("nf_pos_"+id);
+    if(raw){try{atualizarRota(JSON.parse(raw), atend)}catch(e){}}
+  },1500);
 }
 
-function atualizar(d, atend){
+function atualizarRota(posTec, atend){
   if(!mapaRastreio||!atend) return;
-  if(!routingControl){
-    routingControl=L.Routing.control({
-      waypoints:[L.latLng(d.lat,d.lng),L.latLng(atend.lat,atend.lng)],
+  if(!routing){
+    routing=L.Routing.control({
+      waypoints:[L.latLng(posTec.lat,posTec.lng),L.latLng(atend.lat,atend.lng)],
       router:L.Routing.osrmv1({serviceUrl:'https://router.project-osrm.org/route/v1'}),
       lineOptions:{styles:[{color:'#0f2f3e',weight:6}]},
-      createMarker:function(i,wp){if(i===0)return L.marker(wp.latLng,{icon:L.divIcon({html:'<div style="background:#f5c518;border:3px solid #0f2f3e;width:36px;height:36px;border-radius:50%;display:grid;place-items:center">👷</div>',className:'',iconSize:[36,36]})}).bindPopup("Técnico - localização atual"); else return L.marker(wp.latLng).bindPopup(atend.nome+"<br>"+atend.enderecoCompleto)},
+      createMarker:function(i,wp){if(i===0)return L.marker(wp.latLng,{icon:L.divIcon({html:'<div style="background:#f5c518;border:3px solid #0f2f3e;width:36px;height:36px;border-radius:50%;display:grid;place-items:center">👷</div>',className:'',iconSize:[36,36]})}).bindPopup("Técnico - Local atual"); else return L.marker(wp.latLng).bindPopup(atend.nome+"<br>"+atend.enderecoCompleto)},
       fitSelectedRoutes:true,showAlternatives:false
     }).addTo(mapaRastreio);
-    routingControl.on('routesfound',e=>{
+    routing.on('routesfound',e=>{
       let r=e.routes[0].summary;
       document.getElementById("rDist").innerText=(r.totalDistance/1000).toFixed(1)+" km";
-      document.getElementById("rTempo").innerText=Math.round(r.totalTime/60)+" min";
-      document.getElementById("rUpdate").innerText=new Date().toLocaleTimeString("pt-BR");
-      document.getElementById("rastreioStatus").innerText="Técnico a caminho - localização atual em tempo real";
-      document.getElementById("pulseAoVivo").style.display="inline-block";
-      if(r.totalDistance<150)document.getElementById("avisoChegada").style.display="block";
+      document.getElementById("rTempo").innerText=Math.round(r.totalTime/60)+" min até o cliente";
+      document.getElementById("rastreioStatus").innerText="Técnico a caminho - deslocamento atual";
+      if(r.totalDistance<150)document.getElementById("avisoPortao").style.display="block";
     });
-  } else {
-    routingControl.setWaypoints([L.latLng(d.lat,d.lng),L.latLng(atend.lat,atend.lng)]);
+  }else{
+    routing.setWaypoints([L.latLng(posTec.lat,posTec.lng),L.latLng(atend.lat,atend.lng)]);
   }
 }
 
-function copiarLink(){let i=document.getElementById("linkCliente");i.select();document.execCommand("copy");alert("Link copiado!")}
-
-function enviarLinkWhatsapp(){
+function enviarLinkCliente(){
   let link=document.getElementById("linkCliente").value;
   let id=document.getElementById("atendimentoId").value;
   let atend=getAtend().find(a=>a.id===id);
   if(!link){alert("Inicie a rota primeiro para gerar o link");return}
-  if(!atend){alert("Cliente não encontrado");return}
-  let msg=`❄️ *NOSSO FRIO - Acompanhamento em Tempo Real* ❄️
+  let msg=`❄️ *NOSSO FRIO - Acompanhamento ao Vivo* ❄️
 
-Olá, *${atend.nome}*! Tudo bem? 👋
+Olá, *${atend.nome}*! 👋
 
-Seu atendimento foi confirmado e o técnico já está a caminho!
+Seu atendimento foi confirmado!
 
 📍 *Endereço:* ${atend.enderecoCompleto}
 🔧 *Serviço:* ${atend.servico}
 
-*ACOMPANHE AO VIVO:*
-Clique no link abaixo para ver onde o técnico está em tempo real, igual rastreio de entrega. Você fica em casa acompanhando e quando ele estiver chegando já pode abrir o portão! 🏠
-
+*ACOMPANHE O TÉCNICO AO VIVO:*
 👉 ${link}
 
-⏱️ Você verá distância e tempo estimado de chegada.
-🔒 Sua localização fica registrada com segurança para o técnico e para o admin.
+Fique em casa acompanhando pelo app. Quando ele estiver chegando perto, já pode abrir o portão! 🏠
 
 Qualquer dúvida estamos à disposição!
 *Equipe Nosso Frio - Mossoró/RN* ❄️`;
@@ -415,7 +391,7 @@ if(typeof L!=="undefined"){
   L.marker([-5.1875,-37.3442]).addTo(window.mapa).bindPopup("NOSSO FRIO");
 }
 let params=new URLSearchParams(window.location.search);
-if(params.has("rastreio")){mostrarPainel("rastreio");}
+if(params.has("rastreio")) mostrarPainel("rastreio");
 renderAdmin();
 </script>
 </body>
