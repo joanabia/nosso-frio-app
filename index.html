@@ -45,6 +45,15 @@ button,input,select{font:inherit}
 .tabs{position:fixed;bottom:0;left:0;right:0;display:flex;background:white;border-top:1px solid var(--borda);padding:8px 0;z-index:9999}
 .tab{flex:1;background:none;border:0;color:#64748b;font-size:10px;text-align:center}
 .tab span{display:block;font-size:18px}.tab.active{color:var(--azul);font-weight:900}
+/* ADMIN */
+.kpi{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.kpi div{background:white;border:1px solid var(--borda);border-radius:12px;padding:12px}
+.kpi b{font-size:18px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{font-size:10px;color:#64748b;text-align:left;padding:8px;background:#f8fafc}
+td{padding:8px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.pill{font-size:10px;font-weight:900;padding:3px 7px;border-radius:20px}
+.p-pend{background:#fef3c7;color:#92400e}.p-rota{background:#dbeafe;color:#1e40af}.p-fim{background:#dcfce7;color:#166534}
 </style>
 </head>
 <body>
@@ -71,6 +80,7 @@ button,input,select{font:inherit}
 <form id="formAgendamento">
 <label class="field">Nome<input id="nome" required></label>
 <label class="field">Telefone<input id="telefone" type="tel" required></label>
+<label class="field">Empresa (opcional)<input id="empresa" placeholder="Ex: Clínica São José"></label>
 <label class="field">Serviço<select id="servico" required><option value="">Selecione</option><option>Instalação</option><option>Limpeza</option><option>Manutenção</option><option>Não gela</option><option>Outro</option></select></label>
 <label class="field">Data<input id="data" type="date" required></label>
 <label class="field">Endereço<input id="endereco" required></label>
@@ -83,18 +93,36 @@ button,input,select{font:inherit}
 <h2 class="section-title">📍 Seu técnico a caminho</h2>
 <p class="subtitle" id="rastreioStatus">Aguardando técnico iniciar...</p>
 <div id="mapRastreio"></div>
-<div class="notice">Link exclusivo deste atendimento. Quando o técnico clicar em "Cheguei no local", o compartilhamento para automaticamente. Outros clientes não veem sua localização.</div>
+<div class="notice">Link exclusivo deste atendimento. Quando o técnico clicar em "Cheguei no local", o compartilhamento para automaticamente.</div>
 </section>
 
 <section id="painel-tecnico" class="panel">
-<h2 class="section-title">👷 Painel do Técnico (TESTE)</h2>
+<h2 class="section-title">👷 Painel do Técnico</h2>
 <div class="panel-card">
 <label class="field">ID Atendimento<input id="atendimentoId" value="atendimento-001"></label>
 <button class="secondary" type="button" onclick="iniciarRastreio()">1. INICIAR - Compartilhar GPS</button>
-<button class="secondary" type="button" style="background:#991b1b;margin-top:10px" onclick="finalizarRastreio()">2. CHEGUEI - Finalizar Rota</button>
+<button class="secondary" type="button" style="background:#991b1b;margin-top:10px" onclick="finalizarRastreio()">2. CHEGUEI - Finalizar Rota (pede valor e o que fez)</button>
 <p style="margin-top:10px;font-size:12px">Link do cliente:</p>
 <input id="linkCliente" readonly style="width:100%;padding:10px;border:1px dashed #999;border-radius:8px;font-size:11px">
 </div>
+</section>
+
+<section id="admin" class="panel">
+<h2 class="section-title">🔒 Admin Exclusivo</h2>
+<p class="subtitle">Aqui você vê 10, 15 empresas, quem chamou, hora, orçamento e o que foi feito. Só você tem acesso.</p>
+<div class="kpi">
+<div><p style="font-size:10px;color:#64748b">TOTAL</p><b id="kpi-total">0</b></div>
+<div><p style="font-size:10px;color:#d97706">PENDENTES</p><b id="kpi-pend">0</b></div>
+<div><p style="font-size:10px;color:#2563eb">EM ROTA</p><b id="kpi-rota">0</b></div>
+<div><p style="font-size:10px;color:#16a34a">FATURADO</p><b id="kpi-fat">R$ 0</b></div>
+</div>
+<div class="panel-card" style="margin-top:12px;padding:0;overflow:auto">
+<table>
+<thead><tr><th>Data/Hora</th><th>Cliente / Empresa</th><th>Serviço</th><th>Status</th><th>Orçamento</th><th>Feito</th></tr></thead>
+<tbody id="tbodyAdmin"></tbody>
+</table>
+</div>
+<button class="secondary" onclick="if(confirm('Limpar tudo?')){localStorage.removeItem('nf_atend');location.reload()}">Limpar registros (teste)</button>
 </section>
 
 <section id="planos" class="panel"><h2 class="section-title">🛡 Planos</h2><p class="subtitle">Planos mensais para empresas com contrato de manutenção.</p><button class="secondary" onclick="mostrarPainel('inicio')">Voltar</button></section>
@@ -105,11 +133,13 @@ button,input,select{font:inherit}
 <button class="tab" data-tab="agendar"><span>📅</span>Agendar</button>
 <button class="tab" data-tab="rastreio"><span>📍</span>Rastreio</button>
 <button class="tab" data-tab="painel-tecnico"><span>👷</span>Técnico</button>
+<button class="tab" data-tab="admin"><span>🔒</span>Admin</button>
 </nav>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const WHATSAPP="5584998407706";
+const SENHA_ADMIN="1234";
 const defeitos=[
 {t:"Não gela",s:"O ar não está gelando",i:"❄",k:"DEFEITO"},
 {t:"Gotejando",s:"Vazamento de água",i:"💧",k:"DEFEITO"},
@@ -153,84 +183,65 @@ cta.innerHTML="SOLICITAR ATENDIMENTO<small>"+serv.t+" - WhatsApp</small>";
 grid.appendChild(card);
 });
 }
-function abrirWhatsApp(msg){
-window.open("https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(msg),"_blank");
-}
+function abrirWhatsApp(msg){ window.open("https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(msg),"_blank"); }
 function getAtendimentos(){ try{return JSON.parse(localStorage.getItem('nf_atend')||'[]')}catch(e){return []} }
-function salvarAtendimentos(lista){ localStorage.setItem('nf_atend', JSON.stringify(lista)); }
+function salvarAtendimentos(l){ localStorage.setItem('nf_atend', JSON.stringify(l)); }
 function registrarAtendimento(obj){
-let lista = getAtendimentos();
-let idx = lista.findIndex(a=>a.id===obj.id);
-if(idx>=0){ lista[idx] = {...lista[idx],...obj}; } else { lista.unshift(obj); }
+let lista=getAtendimentos();
+let idx=lista.findIndex(a=>a.id===obj.id);
+if(idx>=0){ lista[idx]={...lista[idx],...obj}; } else { lista.unshift(obj); }
 salvarAtendimentos(lista);
+renderAdmin();
 }
-
 function chamar(){
 if(!selecionado) return;
-const id = 'atendimento-'+Date.now();
-document.getElementById('atendimentoId').value = id;
-registrarAtendimento({
-id: id,
-nome: 'Cliente via Início',
-telefone: '',
-empresa: '',
-servico: selecionado.t,
-data: new Date().toLocaleDateString(),
-hora: new Date().toLocaleTimeString(),
-endereco: 'Mossoró - RN',
-tecnico: 'A definir',
-status: 'pendente',
-agendadoPor: 'Cliente via app - Início',
-valor: 0,
-feito: '',
-agendadoEm: new Date().toLocaleString()
-});
+const id='atendimento-'+Date.now();
+document.getElementById('atendimentoId').value=id;
+registrarAtendimento({id:id,nome:'Cliente via Início',telefone:'',empresa:'',servico:selecionado.t,data:new Date().toLocaleDateString(),hora:new Date().toLocaleTimeString(),endereco:'Mossoró - RN',tecnico:'A definir',status:'pendente',agendadoPor:'Início',valor:0,feito:'',agendadoEm:new Date().toLocaleString()});
 const msg="Olá! Gostaria de solicitar atendimento da NOSSO FRIO.\n\nServiço: "+selecionado.t+"\nDescrição: "+selecionado.s+"\n\nGostaria de consultar disponibilidade e orçamento.";
 abrirWhatsApp(msg);
 }
 function mostrarPainel(nome){
+if(nome==='admin'){
+const s=prompt('Senha Admin (padrão 1234):');
+if(s!==SENHA_ADMIN){ alert('Senha incorreta'); return; }
+renderAdmin();
+}
 document.querySelectorAll(".panel").forEach(function(p){p.classList.toggle("active",p.id===nome)});
 document.querySelectorAll(".tab").forEach(function(b){b.classList.toggle("active",b.dataset.tab===nome)});
 if(nome==="inicio" && window.mapa) setTimeout(function(){window.mapa.invalidateSize()},200);
 if(nome==="rastreio") setTimeout(function(){iniciarMapaRastreio()},200);
+}
+function renderAdmin(){
+let dados=getAtendimentos();
+document.getElementById('kpi-total').innerText=dados.length;
+document.getElementById('kpi-pend').innerText=dados.filter(a=>a.status==='pendente').length;
+document.getElementById('kpi-rota').innerText=dados.filter(a=>a.status==='em_rota').length;
+document.getElementById('kpi-fat').innerText='R$ '+dados.filter(a=>a.status==='finalizado').reduce((s,a)=>s+(a.valor||0),0);
+document.getElementById('tbodyAdmin').innerHTML=dados.map(a=>`<tr><td><b>${a.data}</b><br><span style="font-size:10px">${a.hora||''}</span><br><span style="font-size:9px">${a.agendadoEm||''}</span></td><td><b>${a.nome}</b><br>${a.telefone}<br><span style="color:#0f2f3e;font-weight:800">${a.empresa||''}</span><br><span style="font-size:10px">${a.endereco||''}</span></td><td>${a.servico}</td><td><span class="pill ${a.status==='pendente'?'p-pend':a.status==='em_rota'?'p-rota':'p-fim'}">${a.status}</span></td><td><b>${a.valor?'R$ '+a.valor:'—'}</b></td><td style="max-width:150px;font-size:11px">${a.feito||'—'}</td></tr>`).join('')||'<tr><td colspan=6 style="text-align:center;padding:20px;color:#94a3b8">Nenhum agendamento ainda. Quando cliente clicar no WhatsApp já aparece aqui.</td></tr>';
 }
 document.querySelectorAll(".tab").forEach(function(b){b.addEventListener("click",function(){mostrarPainel(b.dataset.tab)})});
 document.getElementById("formAgendamento").addEventListener("submit",function(e){
 e.preventDefault();
 const nome=document.getElementById("nome").value;
 const tel=document.getElementById("telefone").value;
+const emp=document.getElementById("empresa").value;
 const serv=document.getElementById("servico").value;
 const data=document.getElementById("data").value;
 const end=document.getElementById("endereco").value;
-const id = 'atendimento-'+Date.now();
-document.getElementById('atendimentoId').value = id;
-registrarAtendimento({
-id: id,
-nome: nome,
-telefone: tel,
-empresa: '',
-servico: serv,
-data: data,
-hora: '',
-endereco: end,
-tecnico: 'A definir',
-status: 'pendente',
-agendadoPor: 'Cliente via app - Agendamento',
-agendadoEm: new Date().toLocaleString(),
-valor: 0,
-feito: ''
-});
-const msg="Olá! Agendamento NOSSO FRIO\nNome:"+nome+"\nTel:"+tel+"\nServiço:"+serv+"\nData:"+data+"\nEnd:"+end+"\nID:"+id;
+const id='atendimento-'+Date.now();
+document.getElementById('atendimentoId').value=id;
+registrarAtendimento({id:id,nome:nome,telefone:tel,empresa:emp,servico:serv,data:data,[STRIPPED] Date().toLocaleTimeString(),endereco:end,tecnico:'A definir',status:'pendente',agendadoPor:'Agendamento',agendadoEm:new Date().toLocaleString(),valor:0,feito:''});
+const msg="Olá! Agendamento NOSSO FRIO\nNome:"+nome+"\nEmpresa:"+emp+"\nTel:"+tel+"\nServiço:"+serv+"\nData:"+data+"\nEnd:"+end+"\nID:"+id;
 abrirWhatsApp(msg);
 });
-
 let watchId=null; let mapaRastreio=null; let marcador=null;
 function getId(){ const u=new URLSearchParams(window.location.search); return u.get("rastreio") || document.getElementById("atendimentoId").value; }
 function iniciarRastreio(){
 const id=getId();
 if(!navigator.geolocation){ alert("Sem GPS"); return; }
 localStorage.setItem("nf_status_"+id,"a_caminho");
-let lista=getAtendimentos(); let a=lista.find(x=>x.id===id); if(a){ a.status='em_rota'; a.inicioRota=new Date().toLocaleTimeString(); salvarAtendimentos(lista); }
+let lista=getAtendimentos(); let a=lista.find(x=>x.id===id); if(a){ a.status='em_rota'; salvarAtendimentos(lista); }
 const link=location.origin+location.pathname+"?rastreio="+encodeURIComponent(id);
 document.getElementById("linkCliente").value=link;
 watchId=navigator.geolocation.watchPosition(function(pos){
@@ -242,23 +253,22 @@ mostrarPainel("rastreio");
 }
 function finalizarRastreio(){
 const id=getId();
-const valor = prompt('Valor do orçamento / mão de obra? Ex: 150');
+const valor=prompt('Valor do orçamento / mão de obra? Ex: 150');
 if(valor===null) return;
-const feito = prompt('Descreva o que foi feito no atendimento:');
+const feito=prompt('Descreva o que foi feito:');
 if(feito===null) return;
 if(watchId) navigator.geolocation.clearWatch(watchId);
 localStorage.removeItem("nf_pos_"+id);
 localStorage.setItem("nf_status_"+id,"concluido");
 let lista=getAtendimentos(); let a=lista.find(x=>x.id===id); if(a){ a.status='finalizado'; a.valor=parseFloat(valor)||0; a.feito=feito; a.finalizadoEm=new Date().toLocaleTimeString(); salvarAtendimentos(lista); }
-document.getElementById("rastreioStatus").textContent="Técnico chegou. Rastreio encerrado. R$ "+valor+" - "+feito;
-alert("Rota finalizada e registrado no admin: R$ "+valor);
+document.getElementById("rastreioStatus").textContent="Finalizado R$ "+valor+" - "+feito;
+alert("Registrado no Admin: R$ "+valor);
+renderAdmin();
 }
 function iniciarMapaRastreio(){
 if(typeof L==="undefined") return;
-if(!mapaRastreio){
-mapaRastreio=L.map("mapRastreio").setView([-5.1875,-37.3442],13);
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19}).addTo(mapaRastreio);
-} else { mapaRastreio.invalidateSize(); }
+if(!mapaRastreio){ mapaRastreio=L.map("mapRastreio").setView([-5.1875,-37.3442],13); L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19}).addTo(mapaRastreio); }
+else { mapaRastreio.invalidateSize(); }
 const id=getId();
 setInterval(function(){
 if(localStorage.getItem("nf_status_"+id)!=="a_caminho") return;
@@ -271,17 +281,13 @@ if(!mapaRastreio) return;
 if(!marcador){ marcador=L.marker([d.lat,d.lng]).addTo(mapaRastreio); }
 else{ marcador.setLatLng([d.lat,d.lng]); }
 mapaRastreio.setView([d.lat,d.lng],16);
-document.getElementById("rastreioStatus").textContent="Técnico a caminho - tempo real (exclusivo deste cliente)";
+document.getElementById("rastreioStatus").textContent="Técnico a caminho - tempo real";
 }
-
 criarCartoes();
-if(typeof L!=="undefined"){
-window.mapa=L.map("map").setView([-5.1875,-37.3442],13);
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19}).addTo(window.mapa);
-L.marker([-5.1875,-37.3442]).addTo(window.mapa).bindPopup("NOSSO FRIO");
-}
+if(typeof L!=="undefined"){ window.mapa=L.map("map").setView([-5.1875,-37.3442],13); L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19}).addTo(window.mapa); L.marker([-5.1875,-37.3442]).addTo(window.mapa).bindPopup("NOSSO FRIO"); }
 const params=new URLSearchParams(window.location.search);
 if(params.has("rastreio")){ mostrarPainel("rastreio"); }
+renderAdmin();
 </script>
 </body>
 </html>
