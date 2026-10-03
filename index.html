@@ -1,237 +1,145 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0f2f3e">
-  <title>NOSSO FRIO | Mossoró - RN</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <style>
-    :root { --azul:#0f2f3e; --amarelo:#f5c518; --verde:#16a34a; --cinza:#64748b; --fundo:#f3f6f8; --borda:#e2e8f0; }
-    *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-    body{background:var(--fundo);color:#172b35;min-height:100vh}
-    button,input,select{font:inherit}
-    .header{background:var(--azul);color:white;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:3px solid var(--amarelo)}
-    .logo{display:flex;align-items:center;gap:10px}
-    .logo-icon{background:var(--amarelo);color:var(--azul);width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:25px}
-    .logo h1{font-size:18px}.logo span{display:block;font-size:10px;margin-top:4px;letter-spacing:1px}
-    .badge{background:var(--amarelo);color:var(--azul);border-radius:20px;padding:7px 9px;font-weight:bold;font-size:10px}
-    .info{background:#e8f5e9;padding:10px 13px;display:flex;justify-content:space-between;gap:6px;font-size:12px;color:var(--azul)}
-    .mapa-legenda{background:white;padding:9px 13px;color:#475569;font-size:11px}
-    #map,#mapRastreio{width:100%;height:250px;background:#dce5e9}
-    #mapRastreio{height:300px;border-radius:12px}
-    .page{max-width:760px;margin:auto;padding:18px 13px 110px}
-    .section-title{color:var(--azul);font-size:20px;font-weight:900}
-    .subtitle{color:var(--cinza);font-size:13px;line-height:1.6;margin:8px 0 16px}
-    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-    .card{position:relative;background:white;border:2px solid var(--borda);border-radius:14px;padding:18px 8px;min-height:115px;text-align:center;cursor:pointer}
-    .card.selected{background:var(--azul);color:white;border-color:var(--azul)}
-    .ic{font-size:27px;margin-bottom:7px}.ct{font-weight:800;font-size:14px}.cs{font-size:11px;color:var(--cinza);margin-top:5px}
-    .tag{position:absolute;top:6px;right:6px;font-size:8px;font-weight:900;padding:4px 6px;border-radius:20px}
-    .def{background:#fee2e2;color:#991b1b}.ser{background:#dcfce7;color:#166534}
-    .check{display:none;position:absolute;top:6px;left:6px;background:var(--amarelo);color:var(--azul);border-radius:50%;width:20px;height:20px;align-items:center;justify-content:center}
-    .card.selected .check{display:flex}
-    .notice{margin-top:15px;padding:13px;border-radius:11px;background:#fff8c5;border:1px solid #e8ca4c;color:var(--azul);font-size:12px;line-height:1.7}
-    .selected-info{display:none;margin-top:12px;padding:13px;background:white;border:1px solid var(--borda);border-radius:12px;font-size:13px}
-    .selected-info.show{display:block}
-    .cta,.secondary{display:block;width:100%;margin-top:13px;padding:14px;border-radius:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none}
-    .cta{background:var(--azul);color:var(--amarelo);border:2px solid var(--amarelo)}
-    .cta:disabled{opacity:.55}.cta small{display:block;color:white;font-size:11px;font-weight:normal;margin-top:4px}
-    .secondary{background:var(--azul);color:white;border:0}.whatsapp{background:var(--verde)}
-    .panel{display:none}.panel.active{display:block}
-    .panel-card{background:white;border:1px solid var(--borda);border-radius:14px;padding:16px;margin-bottom:13px}
-    .field{display:block;margin-top:14px;font-size:13px;font-weight:bold;color:var(--azul)}
-    .field input,.field select{display:block;width:100%;margin-top:7px;padding:12px;border:1px solid #cbd5e1;border-radius:9px}
-    .tabs{position:fixed;bottom:0;left:0;right:0;display:flex;background:white;border-top:1px solid var(--borda);padding:8px 0;z-index:9999}
-    .tab{flex:1;background:none;border:0;color:#64748b;font-size:10px;text-align:center}
-    .tab span{display:block;font-size:18px}.tab.active{color:var(--azul);font-weight:900}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOSSO FRIO - App Completo</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <header class="header">
-    <div class="logo"><div class="logo-icon">❄</div><div><h1>NOSSO FRIO</h1><span>INSTALAÇÃO • LIMPEZA • MANUTENÇÃO</span></div></div>
-    <div class="badge">MOSSORÓ - RN</div>
-  </header>
-  <div class="info"><div><strong>Região:</strong> Mossoró - RN</div><div><strong>Atendimento:</strong> Sob consulta</div></div>
-  <div id="map"></div>
-  <p class="mapa-legenda"><strong>Sobre o mapa:</strong> Referência de Mossoró. Rastreio real só com link exclusivo.</p>
+<body class="bg-slate-50 font-sans">
+<div id="app" class="min-h-screen">
+<header class="bg-white border-b sticky top-0 z-20">
+<div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+<h1 class="font-black text-blue-700 text-xl">NOSSO FRIO ❄️</h1>
+<div class="flex gap-2">
+<button onclick="mostrar('cliente')" class="px-3 py-1.5 rounded-full bg-blue-600 text-white text-xs font-bold">Cliente</button>
+<button onclick="mostrar('tecnico')" class="px-3 py-1.5 rounded-full bg-slate-200 text-slate-700 text-xs font-bold">Técnico</button>
+<button onclick="mostrar('admin')" class="px-3 py-1.5 rounded-full bg-slate-900 text-white text-xs font-bold">Admin 🔒</button>
+</div>
+</div>
+</header>
 
-  <main class="page">
-    <section id="inicio" class="panel active">
-      <h2 class="section-title">Qual é o problema do seu ar?</h2>
-      <p class="subtitle">Selecione o serviço para iniciar o contato pelo WhatsApp.</p>
-      <div class="grid" id="grid"></div>
-      <div class="selected-info" id="selectedInfo"></div>
-      <button class="cta" id="cta" type="button" onclick="chamar()" disabled>SELECIONE UM SERVIÇO<small>Contato pelo WhatsApp</small></button>
-    </section>
+<section id="tela-cliente" class="max-w-lg mx-auto p-4">
+<div class="bg-white rounded-2xl p-5 shadow-sm border mt-4">
+<h2 class="font-bold text-lg">Agendar Atendimento</h2>
+<p class="text-xs text-slate-500 mt-1">Envia pro WhatsApp + fica registrado pro admin</p>
+<div class="mt-4 space-y-3">
+<input id="c-nome" placeholder="Nome completo" class="w-full border rounded-xl px-3 py-2.5 text-sm">
+<input id="c-tel" placeholder="WhatsApp (ex: 84999779046)" class="w-full border rounded-xl px-3 py-2.5 text-sm">
+<input id="c-empresa" placeholder="Empresa / Local" class="w-full border rounded-xl px-3 py-2.5 text-sm">
+<select id="c-serv" class="w-full border rounded-xl px-3 py-2.5 text-sm">
+<option>Manutenção câmara fria</option>
+<option>Limpeza de ar</option>
+<option>Troca de compressor</option>
+<option>Vazamento de gás</option>
+<option>Instalação</option>
+</select>
+<div class="grid grid-cols-2 gap-2">
+<input id="c-data" type="date" class="border rounded-xl px-3 py-2.5 text-sm">
+<input id="c-hora" type="time" class="border rounded-xl px-3 py-2.5 text-sm">
+</div>
+<input id="c-end" placeholder="Endereço completo" class="w-full border rounded-xl px-3 py-2.5 text-sm">
+<button onclick="agendar()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl mt-2">Enviar no WhatsApp e Registrar</button>
+<p class="text-[11px] text-slate-400 text-center">WHATSAPP_EMPRESA = 5584999779046</p>
+</div>
+</div>
+</section>
 
-    <section id="agendar" class="panel">
-      <h2 class="section-title">📅 Agendamento</h2>
-      <div class="panel-card">
-        <form id="formAgendamento">
-          <label class="field">Nome<input id="nome" required></label>
-          <label class="field">Telefone<input id="telefone" type="tel" required></label>
-          <label class="field">Serviço<select id="servico" required><option value="">Selecione</option><option>Instalação</option><option>Limpeza</option><option>Manutenção</option><option>Não gela</option><option>Outro</option></select></label>
-          <label class="field">Data<input id="data" type="date" required></label>
-          <label class="field">Endereço<input id="endereco" required></label>
-          <button class="secondary whatsapp" type="submit">Enviar pelo WhatsApp</button>
-        </form>
-      </div>
-    </section>
+<section id="tela-tecnico" class="hidden max-w-3xl mx-auto p-4">
+<div class="bg-white rounded-2xl p-5 shadow-sm border mt-4">
+<h2 class="font-bold">Meus Atendimentos (Técnico)</h2>
+<div id="lista-tecnico" class="mt-4 space-y-2"></div>
+</div>
+</section>
 
-    <section id="rastreio" class="panel">
-      <h2 class="section-title">📍 Seu técnico a caminho</h2>
-      <p class="subtitle" id="rastreioStatus">Aguardando técnico iniciar...</p>
-      <div id="mapRastreio"></div>
-      <div class="notice">Link exclusivo deste atendimento. Quando o técnico clicar em "Cheguei no local", o compartilhamento para automaticamente. Outros clientes não veem sua localização.</div>
-    </section>
+<section id="tela-admin" class="hidden max-w-6xl mx-auto p-4">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+<div class="bg-white border rounded-xl p-3"><p class="text-[11px] text-slate-500">HOJE</p><p id="kpi-total" class="font-black text-xl">0</p></div>
+<div class="bg-white border rounded-xl p-3"><p class="text-[11px] text-slate-500">PENDENTES</p><p id="kpi-pend" class="font-black text-xl text-amber-600">0</p></div>
+<div class="bg-white border rounded-xl p-3"><p class="text-[11px] text-slate-500">EM ROTA</p><p id="kpi-rota" class="font-black text-xl text-blue-600">0</p></div>
+<div class="bg-white border rounded-xl p-3"><p class="text-[11px] text-slate-500">FATURADO</p><p id="kpi-faturado" class="font-black text-xl text-emerald-600">R$ 0</p></div>
+</div>
+<div class="bg-white rounded-2xl border mt-4 overflow-hidden">
+<div class="p-4 border-b flex justify-between items-center">
+<h3 class="font-bold">Todos os atendimentos - EXCLUSIVO ADMIN</h3>
+<span class="text-[10px] bg-red-100 text-red-700 px-2 py-1 rounded-full font-bold">🔒 EXCLUSIVO</span>
+</div>
+<div class="overflow-auto">
+<table class="w-full text-xs">
+<thead class="bg-slate-50 text-[10px] text-slate-500"><tr><th class="p-2 text-left">ID</th><th class="p-2 text-left">Cliente/Empresa</th><th class="p-2 text-left">Data/Hora</th><th class="p-2 text-left">Técnico</th><th class="p-2 text-left">Status</th><th class="p-2 text-left">Orçamento</th><th class="p-2 text-left">O que foi feito</th></tr></thead>
+<tbody id="lista-admin"></tbody>
+</table>
+</div>
+</div>
+</section>
+</div>
 
-    <section id="painel-tecnico" class="panel">
-      <h2 class="section-title">👷 Painel do Técnico (TESTE)</h2>
-      <div class="panel-card">
-        <label class="field">ID Atendimento<input id="atendimentoId" value="atendimento-001"></label>
-        <button class="secondary" type="button" onclick="iniciarRastreio()">1. INICIAR - Compartilhar GPS</button>
-        <button class="secondary" type="button" style="background:#991b1b;margin-top:10px" onclick="finalizarRastreio()">2. CHEGUEI - Finalizar Rota</button>
-        <p style="margin-top:10px;font-size:12px">Link do cliente:</p>
-        <input id="linkCliente" readonly style="width:100%;padding:10px;border:1px dashed #999;border-radius:8px;font-size:11px">
-      </div>
-    </section>
+<script>
+const WHATSAPP_EMPRESA = "5584999779046";
+let atendimentos = JSON.parse(localStorage.getItem('nf_atend')||'[]');
+function mostrar(tela){
+document.getElementById('tela-cliente').classList.add('hidden');
+document.getElementById('tela-tecnico').classList.add('hidden');
+document.getElementById('tela-admin').classList.add('hidden');
+document.getElementById('tela-'+tela).classList.remove('hidden');
+render();
+}
+function agendar(){
+const d = {
+id: 'NF-'+Date.now().toString().slice(-6),
+nome: document.getElementById('c-nome').value,
+telefone: document.getElementById('c-tel').value,
+empresa: document.getElementById('c-empresa').value,
+servico: document.getElementById('c-serv').value,
+data: document.getElementById('c-data').value,
+hora: document.getElementById('c-hora').value,
+endereco: document.getElementById('c-end').value,
+tecnico: 'Carlos (Técnico)',
+status: 'pendente',
+agendadoPor: 'Cliente via app',
+valor: 0, feito: ''
+};
+if(!d.nome||!d.telefone){ alert('Preencha nome e telefone'); return; }
+atendimentos.unshift(d);
+localStorage.setItem('nf_atend', JSON.stringify(atendimentos));
+const texto = `*NOVO AGENDAMENTO - NOSSO FRIO*%0ANome: ${d.nome}%0ATel: ${d.telefone}%0AEmpresa: ${d.empresa}%0AServico: ${d.servico}%0AData: ${d.data} ${d.hora}%0AEnd: ${d.endereco}%0AID: ${d.id}`;
+window.open(`https://wa.me/${WHATSAPP_EMPRESA}?text=${texto}`, '_blank');
+alert('Registrado! Veja na aba Admin.');
+render();
+}
+function iniciarRota(id){
+const a = atendimentos.find(x=>x.id===id);
+if(a){ a.status='em_rota'; localStorage.setItem('nf_atend', JSON.stringify(atendimentos)); render();
+window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.endereco)}`,'_blank');
+}
+}
+function finalizar(id){
+const valor = prompt('Valor do orçamento? Ex: 150'); if(valor===null) return;
+const feito = prompt('O que foi feito no atendimento?'); if(feito===null) return;
+const a = atendimentos.find(x=>x.id===id);
+if(a){ a.status='finalizado'; a.valor=parseFloat(valor)||0; a.feito=feito; localStorage.setItem('nf_atend', JSON.stringify(atendimentos)); render(); }
+}
+function render(){
+const lt = document.getElementById('lista-tecnico');
+lt.innerHTML = atendimentos.map(a=>`
+<div class="border rounded-xl p-3 flex justify-between items-center ${a.status==='finalizado'?'bg-emerald-50':''}">
+<div><p class="font-bold text-sm">${a.id} - ${a.nome}</p><p class="text-[11px] text-slate-500">${a.empresa} • ${a.servico} • ${a.data} ${a.hora}</p><p class="text-[11px]">${a.endereco}</p><p class="text-[10px] mt-1"><span class="px-2 py-0.5 rounded-full ${a.status==='pendente'?'bg-amber-100':a.status==='em_rota'?'bg-blue-100':'bg-emerald-100'}">${a.status}</span> ${a.valor?'• R$ '+a.valor:''} ${a.feito?'• '+a.feito.slice(0,40):''}</p></div>
+<div class="flex flex-col gap-1">
+${a.status==='pendente'?`<button onclick="iniciarRota('${a.id}')" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[11px] font-bold">Iniciar Rota</button>`:''}
+${a.status!=='finalizado'?`<button onclick="finalizar('${a.id}')" class="bg-slate-900 text-white px-3 py-1 rounded-full text-[11px] font-bold">Finalizar</button>`:''}
+</div>
+</div>`).join('') || '<p class="text-xs text-slate-400">Nenhum ainda. Agende na aba Cliente.</p>';
 
-    <section id="planos" class="panel"><h2 class="section-title">🛡 Planos</h2><p class="subtitle">Planos mensais para empresas com contrato de manutenção.</p><button class="secondary" onclick="mostrarPainel('inicio')">Voltar</button></section>
-  </main>
+const la = document.getElementById('lista-admin');
+la.innerHTML = atendimentos.map(a=>`<tr class="border-b"><td class="p-2 font-bold">${a.id}</td><td class="p-2"><b>${a.nome}</b><br><span class="text-[11px] text-slate-500">${a.empresa}</span></td><td class="p-2">${a.data}<br>${a.hora}</td><td class="p-2">${a.tecnico}</td><td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${a.status==='pendente'?'bg-amber-100 text-amber-700':a.status==='em_rota'?'bg-blue-100 text-blue-700':'bg-emerald-100 text-emerald-700'}">${a.status}</span></td><td class="p-2 font-bold">${a.valor?'R$ '+a.valor:'—'}</td><td class="p-2 max-w-[200px] truncate">${a.feito||'—'}</td></tr>`).join('') || '<tr><td colspan=7 class="p-4 text-center text-slate-400">Sem registros</td></tr>';
 
-  <nav class="tabs">
-    <button class="tab active" data-tab="inicio"><span>⌂</span>Início</button>
-    <button class="tab" data-tab="agendar"><span>📅</span>Agendar</button>
-    <button class="tab" data-tab="rastreio"><span>📍</span>Rastreio</button>
-    <button class="tab" data-tab="painel-tecnico"><span>👷</span>Técnico</button>
-  </nav>
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script>
-    const WHATSAPP="5584998407706";
-    const defeitos=[
-      {t:"Não gela",s:"O ar não está gelando",i:"❄",k:"DEFEITO"},
-      {t:"Gotejando",s:"Vazamento de água",i:"💧",k:"DEFEITO"},
-      {t:"Barulho",s:"Barulho incomum",i:"🔊",k:"DEFEITO"},
-      {t:"Não liga",s:"Não liga",i:"⏻",k:"DEFEITO"},
-      {t:"Limpeza",s:"Limpeza e higienização",i:"✨",k:"SERVIÇO"},
-      {t:"Instalação",s:"Solicitação de instalação",i:"🔧",k:"SERVIÇO"},
-      {t:"Manutenção",s:"Manutenção preventiva",i:"🛠",k:"SERVIÇO"},
-      {t:"Controle",s:"Problema no controle",i:"🎛",k:"DEFEITO"}
-    ];
-    let selecionado=null;
-    const grid=document.getElementById("grid");
-    const cta=document.getElementById("cta");
-    const selectedInfo=document.getElementById("selectedInfo");
-
-    function criarCartoes(){
-      defeitos.forEach(function(serv){
-        const card=document.createElement("button");
-        card.type="button"; card.className="card";
-        const tag=document.createElement("span");
-        tag.className="tag "+(serv.k==="SERVIÇO"?"ser":"def");
-        tag.textContent=serv.k;
-        const check=document.createElement("span");
-        check.className="check"; check.textContent="✓";
-        const ic=document.createElement("div");
-        ic.className="ic"; ic.textContent=serv.i;
-        const ct=document.createElement("div");
-        ct.className="ct"; ct.textContent=serv.t;
-        const cs=document.createElement("div");
-        cs.className="cs"; cs.textContent=serv.s;
-        card.appendChild(tag); card.appendChild(check); card.appendChild(ic); card.appendChild(ct); card.appendChild(cs);
-        card.addEventListener("click",function(){
-          selecionado=serv;
-          document.querySelectorAll(".card").forEach(function(c){c.classList.remove("selected")});
-          card.classList.add("selected");
-          selectedInfo.textContent="Selecionado: "+serv.t;
-          selectedInfo.classList.add("show");
-          cta.disabled=false;
-          cta.innerHTML="SOLICITAR ATENDIMENTO<small>"+serv.t+" - WhatsApp</small>";
-        });
-        grid.appendChild(card);
-      });
-    }
-    function abrirWhatsApp(msg){
-      window.open("https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(msg),"_blank");
-    }
-    function chamar(){
-      if(!selecionado) return;
-      const msg="Olá! Gostaria de solicitar atendimento da NOSSO FRIO.\n\nServiço: "+selecionado.t+"\nDescrição: "+selecionado.s+"\n\nGostaria de consultar disponibilidade e orçamento.";
-      abrirWhatsApp(msg);
-    }
-    function mostrarPainel(nome){
-      document.querySelectorAll(".panel").forEach(function(p){p.classList.toggle("active",p.id===nome)});
-      document.querySelectorAll(".tab").forEach(function(b){b.classList.toggle("active",b.dataset.tab===nome)});
-      if(nome==="inicio" && window.mapa) setTimeout(function(){window.mapa.invalidateSize()},200);
-      if(nome==="rastreio") setTimeout(function(){iniciarMapaRastreio()},200);
-    }
-    document.querySelectorAll(".tab").forEach(function(b){b.addEventListener("click",function(){mostrarPainel(b.dataset.tab)})});
-    document.getElementById("formAgendamento").addEventListener("submit",function(e){
-      e.preventDefault();
-      const nome=document.getElementById("nome").value;
-      const tel=document.getElementById("telefone").value;
-      const serv=document.getElementById("servico").value;
-      const data=document.getElementById("data").value;
-      const end=document.getElementById("endereco").value;
-      const msg="Olá! Agendamento NOSSO FRIO\nNome:"+nome+"\nTel:"+tel+"\nServiço:"+serv+"\nData:"+data+"\nEnd:"+end;
-      abrirWhatsApp(msg);
-    });
-
-    let watchId=null; let mapaRastreio=null; let marcador=null;
-    function getId(){ const u=new URLSearchParams(window.location.search); return u.get("rastreio") || document.getElementById("atendimentoId").value; }
-    function iniciarRastreio(){
-      const id=getId();
-      if(!navigator.geolocation){ alert("Sem GPS"); return; }
-      localStorage.setItem("nf_status_"+id,"a_caminho");
-      const link=location.origin+location.pathname+"?rastreio="+encodeURIComponent(id);
-      document.getElementById("linkCliente").value=link;
-      watchId=navigator.geolocation.watchPosition(function(pos){
-        const d={lat:pos.coords.latitude,lng:pos.coords.longitude};
-        localStorage.setItem("nf_pos_"+id,JSON.stringify(d));
-        if(mapaRastreio) atualizar(d);
-      },function(err){alert(err.message)},{enableHighAccuracy:true});
-      mostrarPainel("rastreio");
-    }
-    function finalizarRastreio(){
-      const id=getId();
-      if(watchId) navigator.geolocation.clearWatch(watchId);
-      localStorage.removeItem("nf_pos_"+id);
-      localStorage.setItem("nf_status_"+id,"concluido");
-      document.getElementById("rastreioStatus").textContent="Técnico chegou. Rastreio encerrado.";
-      alert("Rota finalizada. Cliente não vê mais.");
-    }
-    function iniciarMapaRastreio(){
-      if(typeof L==="undefined") return;
-      if(!mapaRastreio){
-        mapaRastreio=L.map("mapRastreio").setView([-5.1875,-37.3442],13);
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19}).addTo(mapaRastreio);
-      } else { mapaRastreio.invalidateSize(); }
-      const id=getId();
-      setInterval(function(){
-        if(localStorage.getItem("nf_status_"+id)!=="a_caminho") return;
-        const raw=localStorage.getItem("nf_pos_"+id);
-        if(raw) atualizar(JSON.parse(raw));
-      },1500);
-    }
-    function atualizar(d){
-      if(!mapaRastreio) return;
-      if(!marcador){ marcador=L.marker([d.lat,d.lng]).addTo(mapaRastreio); }
-      else{ marcador.setLatLng([d.lat,d.lng]); }
-      mapaRastreio.setView([d.lat,d.lng],16);
-      document.getElementById("rastreioStatus").textContent="Técnico a caminho - tempo real (exclusivo deste cliente)";
-    }
-
-    // inicia
-    criarCartoes();
-    if(typeof L!=="undefined"){
-      window.mapa=L.map("map").setView([-5.1875,-37.3442],13);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19}).addTo(window.mapa);
-      L.marker([-5.1875,-37.3442]).addTo(window.mapa).bindPopup("NOSSO FRIO");
-    }
-    const params=new URLSearchParams(window.location.search);
-    if(params.has("rastreio")){ mostrarPainel("rastreio"); }
-  </script>
+document.getElementById('kpi-total').innerText = atendimentos.length;
+document.getElementById('kpi-pend').innerText = atendimentos.filter(a=>a.status==='pendente').length;
+document.getElementById('kpi-rota').innerText = atendimentos.filter(a=>a.status==='em_rota').length;
+document.getElementById('kpi-faturado').innerText = 'R$ '+ atendimentos.filter(a=>a.status==='finalizado').reduce((s,a)=>s+(a.valor||0),0);
+}
+render();
+document.getElementById('c-data').valueAsDate = new Date();
+</script>
 </body>
 </html>
