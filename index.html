@@ -10,7 +10,7 @@
 :root { --azul:#0f2f3e; --amarelo:#f5c518; --verde:#16a34a; --cinza:#64748b; --fundo:#f3f6f8; --borda:#e2e8f0; }
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
 body{background:var(--fundo);color:#172b35;min-height:100vh}
-button,input,select{font:inherit}
+button,input,select,textarea{font:inherit}
 .header{background:var(--azul);color:white;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:3px solid var(--amarelo)}
 .logo{display:flex;align-items:center;gap:10px}
 .logo-icon{background:var(--amarelo);color:var(--azul);width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:25px}
@@ -20,11 +20,12 @@ button,input,select{font:inherit}
 .mapa-legenda{background:white;padding:9px 13px;color:#475569;font-size:11px}
 #map,#mapRastreio{width:100%;height:250px;background:#dce5e9}
 #mapRastreio{height:300px;border-radius:12px}
-.page{max-width:760px;margin:auto;padding:18px 13px 110px}
+.page{max-width:760px;margin:auto;padding:18px 13px 120px}
 .section-title{color:var(--azul);font-size:20px;font-weight:900}
 .subtitle{color:var(--cinza);font-size:13px;line-height:1.6;margin:8px 0 16px}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.card{position:relative;background:white;border:2px solid var(--borda);border-radius:14px;padding:18px 8px;min-height:115px;text-align:center;cursor:pointer}
+.card{position:relative;background:white;border:2px solid var(--borda);border-radius:14px;padding:18px 8px;min-height:115px;text-align:center;cursor:pointer;transition:.2s}
+.card:hover{border-color:var(--azul)}
 .card.selected{background:var(--azul);color:white;border-color:var(--azul)}
 .ic{font-size:27px;margin-bottom:7px}.ct{font-weight:800;font-size:14px}.cs{font-size:11px;color:var(--cinza);margin-top:5px}
 .tag{position:absolute;top:6px;right:6px;font-size:8px;font-weight:900;padding:4px 6px;border-radius:20px}
@@ -34,14 +35,19 @@ button,input,select{font:inherit}
 .notice{margin-top:15px;padding:13px;border-radius:11px;background:#fff8c5;border:1px solid #e8ca4c;color:var(--azul);font-size:12px;line-height:1.7}
 .selected-info{display:none;margin-top:12px;padding:13px;background:white;border:1px solid var(--borda);border-radius:12px;font-size:13px}
 .selected-info.show{display:block}
-.cta,.secondary{display:block;width:100%;margin-top:13px;padding:14px;border-radius:12px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none}
+.cta,.secondary{display:block;width:100%;margin-top:13px;padding:14px;border-radius:12px;font-weight:800;cursor:pointer;text-align:center}
 .cta{background:var(--azul);color:var(--amarelo);border:2px solid var(--amarelo)}
 .cta:disabled{opacity:.55}.cta small{display:block;color:white;font-size:11px;font-weight:normal;margin-top:4px}
-.secondary{background:var(--azul);color:white;border:0}.whatsapp{background:var(--verde)}
+.secondary{background:var(--azul);color:white;border:0}
+.whatsapp{background:var(--verde)}
+.btn-excel{background:#107c41;color:white;border:0;padding:10px 14px;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer}
+.btn-limpar{background:#fff;color:#991b1b;border:1px solid #fecaca;padding:10px 14px;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer}
 .panel{display:none}.panel.active{display:block}
-.panel-card{background:white;border:1px solid var(--borda);border-radius:14px;padding:16px;margin-bottom:13px}
+.panel-card{background:white;border:1px solid var(--borda);border-radius:14px;padding:16px;margin-bottom:13px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
 .field{display:block;margin-top:14px;font-size:13px;font-weight:bold;color:var(--azul)}
-.field input,.field select{display:block;width:100%;margin-top:7px;padding:12px;border:1px solid #cbd5e1;border-radius:9px}
+.field input,.field select,.field textarea{display:block;width:100%;margin-top:7px;padding:12px;border:1px solid #cbd5e1;border-radius:9px;background:white}
+.field textarea{resize:vertical}
+.sec-title{font-size:12px;font-weight:900;color:var(--azul);letter-spacing:.5px;margin:18px 0 8px;background:#f1f5f9;padding:8px 10px;border-radius:8px}
 .tabs{position:fixed;bottom:0;left:0;right:0;display:flex;background:white;border-top:1px solid var(--borda);padding:8px 0;z-index:9999}
 .tab{flex:1;background:none;border:0;color:#64748b;font-size:10px;text-align:center}
 .tab span{display:block;font-size:18px}.tab.active{color:var(--azul);font-weight:900}
@@ -63,6 +69,7 @@ td{padding:8px;border-bottom:1px solid #e2e8f0;vertical-align:top}
 <div class="info"><div><strong>Região:</strong> Mossoró - RN</div><div><strong>Atendimento:</strong> Sob consulta</div></div>
 <div id="map"></div>
 <p class="mapa-legenda"><strong>Sobre o mapa:</strong> Referência de Mossoró. Rastreio real só com link exclusivo.</p>
+
 <main class="page">
 <section id="inicio" class="panel active">
 <h2 class="section-title">Qual é o problema do seu ar?</h2>
@@ -71,6 +78,7 @@ td{padding:8px;border-bottom:1px solid #e2e8f0;vertical-align:top}
 <div class="selected-info" id="selectedInfo"></div>
 <button class="cta" id="cta" type="button" onclick="chamar()" disabled>SELECIONE UM SERVIÇO<small>Contato pelo WhatsApp</small></button>
 </section>
+
 <section id="agendar" class="panel">
 <h2 class="section-title">📅 Agendamento</h2>
 <div class="panel-card">
@@ -85,40 +93,76 @@ td{padding:8px;border-bottom:1px solid #e2e8f0;vertical-align:top}
 </form>
 </div>
 </section>
+
 <section id="rastreio" class="panel">
 <h2 class="section-title">📍 Seu técnico a caminho</h2>
 <p class="subtitle" id="rastreioStatus">Aguardando técnico iniciar...</p>
 <div id="mapRastreio"></div>
-<div class="notice">Link exclusivo deste atendimento. Quando o técnico clicar em "Cheguei no local", o compartilhamento para automaticamente. Outros clientes não veem sua localização.</div>
+<div class="notice">Link exclusivo. Quando o técnico clicar em Finalizar, o rastreio encerra automaticamente.</div>
 </section>
+
 <section id="painel-tecnico" class="panel">
-<h2 class="section-title">👷 Painel do Técnico (TESTE)</h2>
+<h2 class="section-title">👷 Painel do Técnico</h2>
+<p class="subtitle">Cadastre aqui as informações do atendimento. Vai direto para o Admin Exclusivo.</p>
+
 <div class="panel-card">
-<label class="field">ID Atendimento<input id="atendimentoId" value="atendimento-001"></label>
-<button class="secondary" type="button" onclick="iniciarRastreio()">1. INICIAR - Compartilhar GPS</button>
-<button class="secondary" type="button" style="background:#991b1b;margin-top:10px" onclick="finalizarRastreio()">2. CHEGUEI - Finalizar Rota</button>
-<p style="margin-top:10px;font-size:12px">Link do cliente:</p>
-<input id="linkCliente" readonly style="width:100%;padding:10px;border:1px dashed #999;border-radius:8px;font-size:11px">
+<div class="sec-title">👤 DADOS DO CLIENTE</div>
+<label class="field">Nome do Cliente<input id="tecNome" placeholder="Ex: Maria Silva"></label>
+<label class="field">Empresa<input id="tecEmpresa" placeholder="Ex: Loja Central - Centro"></label>
+<label class="field">Telefone<input id="tecTelefone" placeholder="Ex: 84 99999-9999"></label>
+<label class="field">Endereço<input id="tecEndereco" placeholder="Rua, número, bairro"></label>
+
+<div class="sec-title">🔧 DADOS DO SERVIÇO</div>
+<label class="field">Serviço<select id="tecServico"><option>Instalação</option><option>Limpeza</option><option>Manutenção</option><option>Não gela</option><option>Gotejando</option><option>Barulho</option><option>Não liga</option><option>Controle</option><option>Outro</option></select></label>
+<label class="field">Valor do Orçamento (R$)<input id="tecValor" type="number" placeholder="Ex: 180"></label>
+<label class="field">Diagnóstico / O que foi feito<textarea id="tecFeito" rows="3" placeholder="Ex: Limpeza completa, carga de gás R22, troca de capacitor..."></textarea></label>
+
+<input type="hidden" id="atendimentoId" value="atendimento-001">
+
+<div style="margin-top:20px;border-top:1px dashed #e2e8f0;padding-top:15px">
+<button class="secondary" type="button" onclick="cadastrarTecnico()" style="background:#16a34a">💾 1. CADASTRAR NO ADMIN</button>
+<p style="font-size:10px;color:#64748b;margin-top:6px;text-align:center">Cai no Admin como PENDENTE</p>
+
+<button class="secondary" type="button" onclick="iniciarRastreio()" style="margin-top:12px">📍 2. INICIAR ROTA - Enviar localização ao cliente</button>
+<p style="font-size:10px;color:#64748b;margin-top:6px;text-align:center">Muda para EM ROTA e gera link do cliente</p>
+
+<button class="secondary" type="button" style="background:#991b1b;margin-top:12px" onclick="finalizarRastreio()">✅ 3. FINALIZAR ATENDIMENTO</button>
+<p style="font-size:10px;color:#64748b;margin-top:6px;text-align:center">Muda para FINALIZADO e entra no faturado</p>
+</div>
+
+<div style="margin-top:15px">
+<p style="font-size:11px;font-weight:bold;color:var(--azul)">Link para enviar ao cliente:</p>
+<input id="linkCliente" readonly style="width:100%;padding:10px;border:1px dashed #94a3b8;border-radius:8px;font-size:11px;margin-top:6px;background:#f8fafc">
+</div>
 </div>
 </section>
+
 <section id="admin" class="panel">
 <h2 class="section-title">🔒 Admin Exclusivo</h2>
-<p class="subtitle">Aqui voce ve todas as empresas, quem chamou, hora que agendou, orcamento e o que foi feito. So voce acessa com senha.</p>
+<p class="subtitle">Registro completo. Exporte mensalmente para não sobrecarregar o app.</p>
+
 <div class="kpi">
-<div><p style="font-size:10px;color:#64748b">TOTAL ATENDIMENTOS</p><b id="kpi-total">0</b></div>
+<div><p style="font-size:10px;color:#64748b">TOTAL</p><b id="kpi-total">0</b></div>
 <div><p style="font-size:10px;color:#d97706">PENDENTES</p><b id="kpi-pend">0</b></div>
 <div><p style="font-size:10px;color:#2563eb">EM ROTA</p><b id="kpi-rota">0</b></div>
 <div><p style="font-size:10px;color:#16a34a">FATURADO</p><b id="kpi-fat">R$ 0</b></div>
 </div>
-<div class="panel-card" style="margin-top:12px;padding:0;overflow:auto">
+
+<div class="panel-card" style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn-excel" onclick="exportarCSV()">📊 Exportar Planilha (Excel)</button>
+<button class="btn-limpar" onclick="limparAntigos()">🗑️ Limpar +30 dias</button>
+<button class="btn-limpar" onclick="if(confirm('Apagar TUDO? Exporte antes!')){localStorage.removeItem('nf_atend');renderAdmin();}">⚠️ Limpar Tudo</button>
+</div>
+
+<div class="panel-card" style="padding:0;overflow:auto">
 <table>
-<thead><tr><th>Data/Hora</th><th>Cliente / Empresa</th><th>Servico</th><th>Status</th><th>Orcamento</th><th>O que foi feito</th></tr></thead>
+<thead><tr><th>Data/Hora</th><th>Cliente / Empresa</th><th>Serviço</th><th>Status</th><th>Orçamento</th><th>Feito</th><th></th></tr></thead>
 <tbody id="tbodyAdmin"></tbody>
 </table>
 </div>
-<button class="secondary" type="button" onclick="if(confirm('Apagar todos os registros de teste?')){localStorage.removeItem('nf_atend');renderAdmin();}">Limpar registros (teste)</button>
 </section>
 </main>
+
 <nav class="tabs">
 <button class="tab active" data-tab="inicio"><span>⌂</span>Início</button>
 <button class="tab" data-tab="agendar"><span>📅</span>Agendar</button>
@@ -126,6 +170,7 @@ td{padding:8px;border-bottom:1px solid #e2e8f0;vertical-align:top}
 <button class="tab" data-tab="painel-tecnico"><span>👷</span>Técnico</button>
 <button class="tab" data-tab="admin"><span>🔒</span>Admin</button>
 </nav>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const WHATSAPP="5584998407706";
@@ -144,6 +189,7 @@ let selecionado=null;
 const grid=document.getElementById("grid");
 const cta=document.getElementById("cta");
 const selectedInfo=document.getElementById("selectedInfo");
+
 function getAtendimentos(){ try{return JSON.parse(localStorage.getItem('nf_atend')||'[]')}catch(e){return []} }
 function salvarAtendimentos(l){ localStorage.setItem('nf_atend', JSON.stringify(l)); }
 function registrarAtendimento(obj){
@@ -155,32 +201,63 @@ renderAdmin();
 }
 function renderAdmin(){
 let dados=getAtendimentos();
-let elTotal=document.getElementById('kpi-total');
-if(!elTotal) return;
-elTotal.innerText=dados.length;
+if(!document.getElementById('kpi-total')) return;
+document.getElementById('kpi-total').innerText=dados.length;
 document.getElementById('kpi-pend').innerText=dados.filter(a=>a.status==='pendente').length;
 document.getElementById('kpi-rota').innerText=dados.filter(a=>a.status==='em_rota').length;
 document.getElementById('kpi-fat').innerText='R$ '+dados.filter(a=>a.status==='finalizado').reduce((s,a)=>s+(parseFloat(a.valor)||0),0);
-let tbody=document.getElementById('tbodyAdmin');
-if(!tbody) return;
-tbody.innerHTML=dados.map(a=>'<tr><td><b>'+(a.data||'')+'</b><br><span style="font-size:10px">'+(a.hora||'')+'</span><br><span style="font-size:9px;color:#64748b">'+(a.quando||'')+'</span></td><td><b>'+(a.nome||'')+'</b><br>'+(a.telefone||'')+'<br><span style="color:#0f2f3e;font-weight:800">'+(a.empresa||'')+'</span><br><span style="font-size:10px">'+(a.endereco||'')+'</span></td><td>'+(a.servico||'')+'</td><td><span class="pill '+(a.status==='pendente'?'p-pend':a.status==='em_rota'?'p-rota':'p-fim')+'">'+(a.status||'')+'</span></td><td><b>'+(a.valor?'R$ '+a.valor:'—')+'</b></td><td style="max-width:150px;font-size:11px">'+(a.feito||'—')+'</td></tr>').join('')||'<tr><td colspan=6 style="text-align:center;padding:20px;color:#94a3b8">Nenhum agendamento ainda. Quando cliente clicar no WhatsApp ja aparece aqui.</td></tr>';
+document.getElementById('tbodyAdmin').innerHTML=dados.map(a=>'<tr><td><b>'+(a.data||'')+'</b><br><span style="font-size:10px">'+(a.hora||'')+'</span></td><td><b>'+(a.nome||'')+'</b><br>'+(a.telefone||'')+'<br><span style="color:#0f2f3e;font-weight:800">'+(a.empresa||'')+'</span><br><span style="font-size:10px">'+(a.endereco||'')+'</span></td><td>'+(a.servico||'')+'</td><td><span class="pill '+(a.status==='pendente'?'p-pend':a.status==='em_rota'?'p-rota':'p-fim')+'">'+(a.status||'')+'</span></td><td><b>'+(a.valor?'R$ '+a.valor:'—')+'</b></td><td style="max-width:150px;font-size:11px">'+(a.feito||'—')+'</td><td><button onclick="excluir(\''+a.id+'\')" style="background:none;border:0;color:#dc2626;font-size:12px;cursor:pointer">✕</button></td></tr>').join('')||'<tr><td colspan=7 style="text-align:center;padding:20px;color:#94a3b8">Nenhum atendimento ainda. Cadastre pelo Técnico.</td></tr>';
 }
+function excluir(id){
+if(!confirm('Excluir este atendimento?')) return;
+let lista=getAtendimentos().filter(a=>a.id!==id);
+salvarAtendimentos(lista);
+renderAdmin();
+}
+function exportarCSV(){
+let dados=getAtendimentos();
+if(!dados.length){ alert('Nenhum dado para exportar'); return; }
+let csv='Data,Hora,Nome,Empresa,Telefone,Endereco,Servico,Status,Valor,Feito,Quando\n';
+dados.forEach(a=>{
+let linha=[a.data||'',a.hora||'',(a.nome||'').replace(/,/g,' '),(a.empresa||'').replace(/,/g,' '),a.telefone||'',(a.endereco||'').replace(/,/g,' '),a.servico||'',a.status||'',a.valor||0,(a.feito||'').replace(/,/g,' ') + ' ' + (a.feito||'').replace(/\n/g,' '),a.quando||''].join(',');
+csv+=linha+'\n';
+});
+let blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+let url=URL.createObjectURL(blob);
+let aEl=document.createElement('a');
+aEl.href=url;
+aEl.download='nosso-frio-atendimentos-'+new Date().toISOString().slice(0,10)+'.csv';
+aEl.click();
+alert('Planilha baixada! Agora pode importar no Excel ou no sistema oficial da empresa e depois limpar antigos.');
+}
+function limparAntigos(){
+if(!confirm('Apagar atendimentos com mais de 30 dias? Exporte antes se precisar!')) return;
+let lista=getAtendimentos();
+let agora=new Date();
+let filtrada=lista.filter(a=>{
+if(!a.quando) return true;
+try{
+let d=new Date(a.quando);
+let diff=(agora-d)/(1000*60*60*24);
+return diff<=30;
+}catch(e){ return true; }
+});
+let apagados=lista.length-filtrada.length;
+salvarAtendimentos(filtrada);
+renderAdmin();
+alert(apagados+' registros antigos apagados. App mais leve!');
+}
+
 function criarCartoes(){
 grid.innerHTML="";
 defeitos.forEach(function(serv){
 const card=document.createElement("button");
 card.type="button"; card.className="card";
-const tag=document.createElement("span");
-tag.className="tag "+(serv.k==="SERVIÇO"?"ser":"def");
-tag.textContent=serv.k;
-const check=document.createElement("span");
-check.className="check"; check.textContent="✓";
-const ic=document.createElement("div");
-ic.className="ic"; ic.textContent=serv.i;
-const ct=document.createElement("div");
-ct.className="ct"; ct.textContent=serv.t;
-const cs=document.createElement("div");
-cs.className="cs"; cs.textContent=serv.s;
+const tag=document.createElement("span"); tag.className="tag "+(serv.k==="SERVIÇO"?"ser":"def"); tag.textContent=serv.k;
+const check=document.createElement("span"); check.className="check"; check.textContent="✓";
+const ic=document.createElement("div"); ic.className="ic"; ic.textContent=serv.i;
+const ct=document.createElement("div"); ct.className="ct"; ct.textContent=serv.t;
+const cs=document.createElement("div"); cs.className="cs"; cs.textContent=serv.s;
 card.appendChild(tag); card.appendChild(check); card.appendChild(ic); card.appendChild(ct); card.appendChild(cs);
 card.addEventListener("click",function(){
 selecionado=serv;
@@ -194,29 +271,14 @@ cta.innerHTML="SOLICITAR ATENDIMENTO<small>"+serv.t+" - WhatsApp</small>";
 grid.appendChild(card);
 });
 }
-function abrirWhatsApp(msg){
-window.open("https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(msg),"_blank");
-}
+function abrirWhatsApp(msg){ window.open("https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(msg),"_blank"); }
 function chamar(){
 if(!selecionado) return;
 let id='atendimento-'+Date.now();
 document.getElementById('atendimentoId').value=id;
 let agora=new Date();
-registrarAtendimento({
-id:id,
-nome:'Cliente via Inicio',
-telefone:'',
-empresa:'',
-servico:selecionado.t,
-data:agora.toLocaleDateString(),
-hora:agora.toLocaleTimeString(),
-endereco:'Mossoro - RN',
-status:'pendente',
-valor:0,
-feito:'',
-quando:agora.toLocaleString()
-});
-const msg="Olá! Gostaria de solicitar atendimento da NOSSO FRIO.\n\nServiço: "+selecionado.t+"\nDescrição: "+selecionado.s+"\n\nGostaria de consultar disponibilidade e orçamento.";
+registrarAtendimento({id:id,nome:'Cliente via Inicio',telefone:'',empresa:'',servico:selecionado.t,data:agora.toLocaleDateString(),[STRIPPED]'Mossoro - RN',status:'pendente',valor:0,feito:'',quando:agora.toLocaleString()});
+const msg="Olá! Gostaria de solicitar atendimento da NOSSO FRIO.\n\nServiço: "+selecionado.t+"\nDescrição: "+selecionado.s;
 abrirWhatsApp(msg);
 }
 function mostrarPainel(nome){
@@ -235,30 +297,32 @@ document.getElementById("formAgendamento").addEventListener("submit",function(e)
 e.preventDefault();
 let nome=document.getElementById("nome").value;
 let tel=document.getElementById("telefone").value;
-let emp=document.getElementById("empresa")? document.getElementById("empresa").value : "";
+let emp=document.getElementById("empresa")?document.getElementById("empresa").value:"";
 let serv=document.getElementById("servico").value;
 let data=document.getElementById("data").value;
 let end=document.getElementById("endereco").value;
 let id='atendimento-'+Date.now();
 document.getElementById('atendimentoId').value=id;
 let agora=new Date();
-registrarAtendimento({
-id:id,
-nome:nome,
-telefone:tel,
-empresa:emp,
-servico:serv,
-data:data,
-hora:agora.toLocaleTimeString(),
-endereco:end,
-status:'pendente',
-valor:0,
-feito:'',
-quando:agora.toLocaleString()
-});
-let msg="Olá! Agendamento NOSSO FRIO\nNome:"+nome+"\nEmpresa:"+emp+"\nTel:"+tel+"\nServiço:"+serv+"\nData:"+data+"\nEnd:"+end+"\nID:"+id;
+registrarAtendimento({id:id,nome:nome,telefone:tel,empresa:emp,servico:serv,data:data,[STRIPPED]'pendente',valor:0,feito:'',quando:agora.toLocaleString()});
+let msg="Olá! Agendamento NOSSO FRIO\nNome:"+nome+"\nEmpresa:"+emp+"\nTel:"+tel+"\nServiço:"+serv+"\nData:"+data+"\nEnd:"+end;
 abrirWhatsApp(msg);
 });
+function cadastrarTecnico(){
+let id=document.getElementById('atendimentoId').value || 'atendimento-'+Date.now();
+document.getElementById('atendimentoId').value=id;
+let nome=document.getElementById('tecNome').value;
+let empresa=document.getElementById('tecEmpresa').value;
+let telefone=document.getElementById('tecTelefone').value;
+let servico=document.getElementById('tecServico').value;
+let endereco=document.getElementById('tecEndereco').value;
+let valor=document.getElementById('tecValor').value;
+let feito=document.getElementById('tecFeito').value;
+if(!nome){ alert('Preencha nome do cliente'); return; }
+let agora=new Date();
+registrarAtendimento({id:id,nome:nome,empresa:empresa,telefone:telefone,servico:servico,data:agora.toLocaleDateString(),[STRIPPED]'pendente',valor:parseFloat(valor)||0,feito:feito,quando:agora.toLocaleString()});
+alert('✅ Cadastrado! Já aparece no Admin como PENDENTE.');
+}
 let watchId=null; let mapaRastreio=null; let marcador=null;
 function getId(){ const u=new URLSearchParams(window.location.search); return u.get("rastreio") || document.getElementById("atendimentoId").value; }
 function iniciarRastreio(){
@@ -266,6 +330,17 @@ const id=getId();
 if(!navigator.geolocation){ alert("Sem GPS"); return; }
 localStorage.setItem("nf_status_"+id,"a_caminho");
 let lista=getAtendimentos(); let a=lista.find(x=>x.id===id); if(a){ a.status='em_rota'; salvarAtendimentos(lista); renderAdmin(); }
+else {
+let nome=document.getElementById('tecNome').value || 'Cliente';
+let empresa=document.getElementById('tecEmpresa').value || '';
+let telefone=document.getElementById('tecTelefone').value || '';
+let servico=document.getElementById('tecServico').value || 'Serviço';
+let endereco=document.getElementById('tecEndereco').value || '';
+let valor=document.getElementById('tecValor').value || 0;
+let feito=document.getElementById('tecFeito').value || '';
+let agora=new Date();
+registrarAtendimento({id:id,nome:nome,empresa:empresa,telefone:telefone,servico:servico,data:agora.toLocaleDateString(),[STRIPPED]'em_rota',valor:parseFloat(valor)||0,feito:feito,quando:agora.toLocaleString()});
+}
 const link=location.origin+location.pathname+"?rastreio="+encodeURIComponent(id);
 document.getElementById("linkCliente").value=link;
 watchId=navigator.geolocation.watchPosition(function(pos){
@@ -277,24 +352,22 @@ mostrarPainel("rastreio");
 }
 function finalizarRastreio(){
 const id=getId();
-let valor=prompt('Valor do orcamento / mao de obra? Ex: 150');
-if(valor===null) return;
-let feito=prompt('Descreva o que foi feito no local:');
-if(feito===null) return;
+let valor=document.getElementById('tecValor').value;
+let feito=document.getElementById('tecFeito').value;
+if(!valor){ valor=prompt('Valor do orçamento? Ex: 150'); if(valor===null) return; }
+if(!feito){ feito=prompt('O que foi feito?'); if(feito===null) return; }
 if(watchId) navigator.geolocation.clearWatch(watchId);
 localStorage.removeItem("nf_pos_"+id);
 localStorage.setItem("nf_status_"+id,"concluido");
 let lista=getAtendimentos(); let a=lista.find(x=>x.id===id); if(a){ a.status='finalizado'; a.valor=parseFloat(valor)||0; a.feito=feito; salvarAtendimentos(lista); }
 document.getElementById("rastreioStatus").textContent="Finalizado R$ "+valor+" - "+feito;
-alert("Registrado no Admin: R$ "+valor);
+alert("✅ Finalizado! R$ "+valor+" registrado no Admin.");
 renderAdmin();
 }
 function iniciarMapaRastreio(){
 if(typeof L==="undefined") return;
-if(!mapaRastreio){
-mapaRastreio=L.map("mapRastreio").setView([-5.1875,-37.3442],13);
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19}).addTo(mapaRastreio);
-} else { mapaRastreio.invalidateSize(); }
+if(!mapaRastreio){ mapaRastreio=L.map("mapRastreio").setView([-5.1875,-37.3442],13); L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19}).addTo(mapaRastreio); }
+else { mapaRastreio.invalidateSize(); }
 const id=getId();
 setInterval(function(){
 if(localStorage.getItem("nf_status_"+id)!=="a_caminho") return;
@@ -307,7 +380,7 @@ if(!mapaRastreio) return;
 if(!marcador){ marcador=L.marker([d.lat,d.lng]).addTo(mapaRastreio); }
 else{ marcador.setLatLng([d.lat,d.lng]); }
 mapaRastreio.setView([d.lat,d.lng],16);
-document.getElementById("rastreioStatus").textContent="Técnico a caminho - tempo real (exclusivo deste cliente)";
+document.getElementById("rastreioStatus").textContent="Técnico a caminho - tempo real";
 }
 criarCartoes();
 if(typeof L!=="undefined"){
